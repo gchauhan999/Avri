@@ -1,8 +1,12 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+#
+# This is a three-workspace repo (client / server / admin), so every pattern
+# below is deliberately unanchored — a leading slash would only match the root
+# and miss `client/.next`, `server/dist` and so on.
 
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -11,14 +15,21 @@
 !.yarn/versions
 
 # testing
-/coverage
+coverage/
 
-# next.js
-/.next/
-/out/
+# next.js — client/ and admin/ each build into their own .next
+.next/
+out/
 
 # production
-/build
+build/
+dist/
+
+# uploaded files: résumés, client logos and blog covers. Never in git — they
+# are user data, and résumés are personal data. See server/README.md for the
+# backup story.
+server/storage/
+server/uploads/
 
 # misc
 .DS_Store
@@ -35,7 +46,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-# ...but keep the documented template in version control
+# ...but keep the documented templates in version control
 !.env.example
 
 # vercel

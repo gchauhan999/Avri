@@ -1,27 +1,35 @@
 {
-  "name": "arvi-energy",
-  "version": "0.1.0",
+  "name": "avri-energy",
+  "version": "1.0.0",
   "private": true,
+  "description": "Avri Energy — public website, REST API and admin panel.",
+  "workspaces": [
+    "client",
+    "server",
+    "admin"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "framer-motion": "^12.43.0",
-    "next": "16.2.12",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "dev": "concurrently -n api,web,admin -c blue,green,magenta \"npm:dev:server\" \"npm:dev:client\" \"npm:dev:admin\"",
+    "dev:client": "npm run dev -w @avri/client",
+    "dev:server": "npm run dev -w @avri/server",
+    "dev:admin": "npm run dev -w @avri/admin",
+    "build": "npm run build -w @avri/server && npm run build -w @avri/client && npm run build -w @avri/admin",
+    "start": "concurrently -n api,web,admin -c blue,green,magenta \"npm:start:server\" \"npm:start:client\" \"npm:start:admin\"",
+    "start:client": "npm run start -w @avri/client",
+    "start:server": "npm run start -w @avri/server",
+    "start:admin": "npm run start -w @avri/admin",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:generate": "npm run db:generate -w @avri/server",
+    "db:migrate": "npm run db:migrate -w @avri/server",
+    "db:seed": "npm run db:seed -w @avri/server",
+    "db:studio": "npm run db:studio -w @avri/server",
+    "admin:create": "npm run admin:create -w @avri/server"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.12",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }

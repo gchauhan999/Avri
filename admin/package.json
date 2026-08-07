@@ -1,0 +1,11 @@
+{
+  "name": "@avri/admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Avri Energy admin panel — jobs, applications, blog, clients and enquiries.",
+  "scripts": {
+    "dev": "echo \"admin not scaffolded yet\" && exit 0",
+    "build": "echo \"admin not scaffolded yet\" && exit 0",
+    "start": "echo \"admin not scaffolded yet\" && exit 0"
+  }
+}
