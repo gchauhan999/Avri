@@ -1,0 +1,13 @@
+{
+  "name": "@avri/server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Avri Energy REST API — careers, blog, clients and enquiries.",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "echo \"server not scaffolded yet\" && exit 0",
+    "build": "echo \"server not scaffolded yet\" && exit 0",
+    "start": "echo \"server not scaffolded yet\" && exit 0"
+  }
+}
