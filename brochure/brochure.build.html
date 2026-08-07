@@ -39,7 +39,16 @@
     height:210mm;
     overflow:hidden;
     page-break-after:always;
-    background:#fff;
+    /* Diagonal wash, sampled off the reference: cool blue-grey in the top
+       corner, neutral through the middle, warming to cream low down. Every
+       page carries it, so the document reads as one piece. */
+    background:linear-gradient(155deg,
+      #d3dce9 0%,
+      #e7ebf3 20%,
+      #f1f3f6 42%,
+      #f7f5f3 62%,
+      #fcf8f4 84%,
+      #f9f8f6 100%);
     display:flex;
     flex-direction:column;
   }
@@ -93,7 +102,7 @@
   /* ========================================================== COVER PAGE */
   /* Light cover, matched to the back cover: white page, brand mark in full
      colour, square photograph on the right, navy closing band. */
-  .cover{ background:#fff; color:var(--ink-700); }
+  .cover{ color:var(--ink-700); }
   .cover .pad{ z-index:3; padding-bottom:34mm; }
 
   /* --- photo mosaic ---------------------------------------------------- */
@@ -208,7 +217,7 @@
   .prose p:last-child{ margin-bottom:0; }
 
   .numbers{
-    background:var(--ink-50);
+    background:#fff;
     border:.35mm solid var(--ink-100);
     border-radius:4mm;
     padding:6mm;
@@ -251,7 +260,7 @@
     color:var(--ink-600);
     background:#fff;
   }
-  .chip.solid{ background:var(--ink-50); }
+  .chip.solid{ background:#fff; }
 
   /* ========================================================== SERVICES */
   .grid4{ display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; flex:1; }
@@ -281,7 +290,7 @@
     border:.35mm solid var(--ink-100);
     border-radius:3mm;
     padding:5mm;
-    background:var(--ink-50);
+    background:#fff;
   }
   .grp h3{ font-size:10pt; }
   .grp .bar{ width:12mm; height:.9mm; background:var(--green); border-radius:1mm; margin:2.5mm 0 3.5mm; }
@@ -354,7 +363,7 @@
   .why-card{
     border-radius:3mm;
     padding:5mm;
-    background:var(--ink-50);
+    background:#fff;
     border:.35mm solid var(--ink-100);
   }
   .why-card h3{ font-size:9.5pt; line-height:1.2; }
@@ -386,7 +395,7 @@
   .qcard{
     border-radius:3mm;
     padding:5mm;
-    background:var(--ink-50);
+    background:#fff;
     border:.35mm solid var(--ink-100);
     display:flex; flex-direction:column;
   }
@@ -397,7 +406,7 @@
 
   /* ============================================================= BACK */
   /* Light back cover: white page, brand mark in full colour, navy closing band. */
-  .back{ background:#fff; color:var(--ink-700); }
+  .back{ color:var(--ink-700); }
   .back .pad{ position:relative; z-index:2; padding-bottom:32mm; }
   .back .cover-meta{ color:var(--ink-400); }
   .back .cover-meta b{ color:var(--navy); }
@@ -741,7 +750,7 @@
       <div class="ind"><h3>Hospitals</h3><ul><li>Essential / non-essential segregation</li><li>DG backup, UPS, medical-grade earthing</li><li>OT and ICU power distribution</li></ul></div>
 
       <div class="ind" style="grid-column:span 2"><h3>Smart Cities</h3><p>Smart lighting, metering and connected infrastructure for urban modernisation programmes.</p><ul><li>Centralised smart street lighting</li><li>Smart metering and command-centre integration</li><li>EV charging and public infrastructure</li></ul></div>
-      <div class="ind" style="grid-column:span 2; border-left-color:var(--green); background:var(--ink-50)">
+      <div class="ind" style="grid-column:span 2; border-left-color:var(--green); background:#fff">
         <h3>Not on the list?</h3>
         <p>If it carries current, we have probably built it. Send us the drawings or the tender
            document and we will tell you honestly whether we are the right contractor for it.</p>
