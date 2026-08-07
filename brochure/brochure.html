@@ -96,29 +96,52 @@
   .cover{ background:#fff; color:var(--ink-700); }
   .cover .pad{ z-index:3; padding-bottom:34mm; }
 
-  /* --- photograph ------------------------------------------------------ */
-  /* Square, riding alongside the headline block rather than the whole page —
-     it is a flex child of .cover-mid, so it centres itself against the copy
-     however that copy reflows. The stats strip below clears both and runs the
-     full width of the page. */
-  .cover-photo{
-    flex:none;
-    position:relative;
-    width:100mm; height:100mm;
-    overflow:hidden;
-    border-radius:4mm;
+  /* --- photo mosaic ---------------------------------------------------- */
+  /* Five tiles stacked down the right-hand side, the whole block cut to a
+     chevron so its left edge angles in and back out. The grid gaps let the
+     white page through, which is what separates the tiles. It stops short of
+     the stats strip so that strip can still run the full width of the page. */
+  .cover-mosaic{
+    position:absolute; z-index:2;
+    top:0; right:0;
+    width:129mm; height:152mm;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:39mm 32mm 30mm 1fr;
+    gap:1.6mm;
+    clip-path:polygon(45% 0, 100% 0, 100% 100%, 20% 100%, 0 62%);
   }
-  .cover-photo img{
-    display:block; width:100%; height:100%;
-    object-fit:cover;
-    /* Framed right of centre: keeps the transformer and bushings in shot and
-       crops out the equipment badge on the left-hand cabinet. */
-    object-position:60% 50%;
-  }
+  .cover-mosaic img{ display:block; width:100%; height:100%; object-fit:cover; }
+  /* The first three tiles run the full width; the last row is a pair. */
+  .cover-mosaic .wide{ grid-column:1 / 3; }
+  /* Each tile is a far tighter crop than its source, so the subject has to be
+     placed by hand — left to centre, most of these frame on empty sky. */
+  .cover-mosaic .t1{ object-position:50% 42%; }   /* switchyard, keep the sun */
+  .cover-mosaic .t2{ object-position:56% 52%; }   /* transformer bay */
+  .cover-mosaic .t3{ object-position:56% 42%; }   /* lineman on the pole */
+  .cover-mosaic .t4{ object-position:42% 52%; }   /* solar rows and turbines */
+  .cover-mosaic .t5{ object-position:50% 74%; }   /* the charge points */
 
-  .cover-top{ display:flex; justify-content:space-between; align-items:flex-start; }
-  .cover-meta{ text-align:right; font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-400); line-height:2; }
-  .cover-meta b{ color:var(--navy); font-weight:700; }
+  /* --- watermark ------------------------------------------------------- */
+  /* Brand mark ghosted behind the headline. The box crops the lockup to the
+     AVRI ENERGY row — the strap-line beneath would rake through the body copy. */
+  .cover-wm{
+    position:absolute; z-index:1;
+    top:47%; left:10mm;
+    transform:translateY(-50%);
+    width:140mm; height:24.7mm;
+    overflow:hidden;
+    opacity:.09;
+  }
+  .cover-wm img{ display:block; width:100%; margin-top:-5mm; }
+
+  /* Logo and strap sit left, stacked — the top right corner is mosaic now. */
+  .cover-top{ display:block; }
+  .cover-meta{
+    margin-top:4.5mm;
+    font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--ink-400);
+  }
 
   /* Rotated spine label down the left edge. */
   .cover-spine{
@@ -133,20 +156,14 @@
     z-index:3;
   }
 
-  /* Small fixed gap under the logo row; the slack that used to pool there is
-     taken up by the taller photograph, and what remains falls to the stats. */
-  .cover-mid{
-    margin-top:6mm;
-    margin-bottom:11mm;
-    display:flex;
-    align-items:center;
-    gap:16mm;
-  }
-  .cover-copy{ flex:1; min-width:0; }
-  .cover-stats{ margin-top:auto; }
+  /* Autos both sides, so the copy centres in the band between the logo and
+     the stats instead of the slack pooling under the logo. */
+  .cover-mid{ margin-top:auto; margin-bottom:auto; }
+  /* Capped clear of the mosaic's leftmost point. */
+  .cover-copy{ max-width:143mm; }
   .cover h1{
     color:var(--navy);
-    font-size:34pt;
+    font-size:32pt;
     line-height:1.06;
     letter-spacing:-.022em;
     margin-top:4mm;
@@ -412,14 +429,20 @@
 <!-- ============================================================ 1. COVER -->
 <section class="page cover">
   <div class="cover-spine">Company Profile</div>
+  <div class="cover-wm"><img src="__LOGO_COLOR__" alt=""></div>
+
+  <div class="cover-mosaic">
+    <img class="wide t1" src="__COVER_1__" alt="Transmission switchyard at dusk">
+    <img class="wide t2" src="__COVER_2__" alt="33/11 kV substation transformer bay">
+    <img class="wide t3" src="__COVER_3__" alt="HT and LT overhead line works">
+    <img class="t4" src="__COVER_4__" alt="Utility-scale solar and wind generation">
+    <img class="t5" src="__COVER_5__" alt="EV charging points">
+  </div>
 
   <div class="pad">
     <div class="cover-top">
       <div class="logo"><img src="__LOGO_COLOR__" alt="Avri Energy"></div>
-      <div class="cover-meta">
-        Electrical EPC &amp; Renewable Energy<br>
-        Ghaziabad, U.P.
-      </div>
+      <div class="cover-meta">Electrical EPC &amp; Renewable Energy · Ghaziabad, U.P.</div>
     </div>
 
     <div class="cover-mid">
@@ -432,10 +455,6 @@
           EV charging infrastructure — engineered, built and maintained by one accountable team.
         </p>
         <div class="cover-tag">Reliable Power. Trusted Partner.</div>
-      </div>
-
-      <div class="cover-photo">
-        <img src="__COVER_PHOTO__" alt="33/11 kV substation — transformer bay and switchyard">
       </div>
     </div>
 

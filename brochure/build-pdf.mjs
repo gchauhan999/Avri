@@ -2,7 +2,7 @@
 //
 //   node build-pdf.mjs
 //
-// Inlines logo-color.png and cover-photo.jpg as data URIs (so the PDF has no
+// Inlines logo-color.png and cover-1..5.jpg as data URIs (so the PDF has no
 // external file dependency), then drives headless Chrome's print-to-pdf. Both sources
 // declare their own @page size, which Chrome honours:
 //   letterhead.html -> A4 portrait   (210 x 297 mm)
@@ -28,8 +28,10 @@ if (!CHROME) throw new Error("No Chrome or Edge found to render the PDFs.");
 const logo =
   "data:image/png;base64," + readFileSync(at("logo-color.png")).toString("base64");
 
-const coverPhoto =
-  "data:image/jpeg;base64," + readFileSync(at("cover-photo.jpg")).toString("base64");
+// The five tiles of the cover mosaic, inlined as __COVER_1__ .. __COVER_5__.
+const coverTiles = [1, 2, 3, 4, 5].map(
+  (n) => "data:image/jpeg;base64," + readFileSync(at(`cover-${n}.jpg`)).toString("base64")
+);
 
 const jobs = [
   { src: "letterhead.html", build: "letterhead.build.html", pdf: "Avri-Energy-Letterhead.pdf" },
@@ -37,9 +39,10 @@ const jobs = [
 ];
 
 for (const job of jobs) {
-  const html = readFileSync(at(job.src), "utf8")
-    .replaceAll("__LOGO_COLOR__", logo)
-    .replaceAll("__COVER_PHOTO__", coverPhoto);
+  let html = readFileSync(at(job.src), "utf8").replaceAll("__LOGO_COLOR__", logo);
+  coverTiles.forEach((uri, i) => {
+    html = html.replaceAll(`__COVER_${i + 1}__`, uri);
+  });
   writeFileSync(at(job.build), html);
 
   execFileSync(

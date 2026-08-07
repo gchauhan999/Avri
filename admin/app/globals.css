@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/**
+ * The admin panel shares the brand palette with the public site so it looks
+ * like Avri Energy's tool, but it does not share components. The marketing
+ * primitives are `rounded-3xl` cards with scroll-triggered animation and
+ * `py-24` sections — all wrong for dense tables someone reads for an hour.
+ * Sharing them across two Next apps would need a workspace package and a
+ * build step; duplicating ~200 lines of plain UI is cheaper and clearer.
+ *
+ * Palette values are copied verbatim from `client/app/globals.css`.
+ */
+
+@theme {
+  /* --- Brand palette ------------------------------------------------------ */
+  --color-brand-50: #eaf5ee;
+  --color-brand-100: #cbe7d5;
+  --color-brand-200: #9bcfae;
+  --color-brand-300: #6ab787;
+  --color-brand-400: #3f9d63;
+  --color-brand-500: #1e7f3f;
+  --color-brand-600: #1a6f37;
+  --color-brand-700: #155a2d;
+  --color-brand-800: #104522;
+  --color-brand-900: #0a2e17;
+
+  --color-accent-50: #fff4e6;
+  --color-accent-100: #ffe2bf;
+  --color-accent-200: #ffc98a;
+  --color-accent-300: #ffae54;
+  --color-accent-400: #fa951f;
+  --color-accent-500: #f57c00;
+  --color-accent-600: #d96b00;
+  --color-accent-700: #b25700;
+  --color-accent-800: #8a4300;
+  --color-accent-900: #5c2c00;
+
+  --color-ink-50: #f7f7f8;
+  --color-ink-100: #ededf0;
+  --color-ink-200: #d9dae0;
+  --color-ink-300: #b9bbc2;
+  --color-ink-400: #8a8d97;
+  --color-ink-500: #5f636e;
+  --color-ink-600: #43464f;
+  --color-ink-700: #2c2e35;
+  --color-ink-800: #1a1c21;
+  --color-ink-900: #0d0e11;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", Menlo, monospace;
+}
+
+body {
+  background-color: var(--color-ink-50);
+  color: var(--color-ink-900);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible focus everywhere. Staff use this panel with a keyboard. */
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+/**
+ * Article body styling for the blog editor.
+ *
+ * Deliberately the same rules the public article page uses, so what an author
+ * sees in the editor is what ships. Written as scoped element selectors rather
+ * than pulling in @tailwindcss/typography — the project has no Tailwind
+ * plugins and the brand tokens are already here.
+ */
+.article-body {
+  color: var(--color-ink-600);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.article-body > * + * {
+  margin-top: 1.35em;
+}
+.article-body h2 {
+  margin-top: 2em;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-ink-900);
+  letter-spacing: -0.01em;
+}
+.article-body h3 {
+  margin-top: 1.75em;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-ink-900);
+}
+.article-body a {
+  color: var(--color-brand-600);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.article-body ul,
+.article-body ol {
+  padding-left: 1.35em;
+}
+.article-body ul {
+  list-style: disc;
+}
+.article-body ol {
+  list-style: decimal;
+}
+.article-body li + li {
+  margin-top: 0.4em;
+}
+.article-body blockquote {
+  border-left: 3px solid var(--color-brand-500);
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: var(--color-ink-700);
+}
+.article-body img {
+  border-radius: 0.75rem;
+  max-width: 100%;
+  height: auto;
+}
+.article-body code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-ink-100);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+}
+
+/* TipTap's editable surface. */
+.article-body.ProseMirror {
+  min-height: 22rem;
+  outline: none;
+}
+.article-body.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--color-ink-300);
+  pointer-events: none;
+}
