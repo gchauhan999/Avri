@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Avri Energy — Company Profile</title>
+<style>
+  @page { size: 297mm 210mm; margin: 0; }
+
+  :root{
+    --navy:#142a52;
+    --navy-800:#0f2043;
+    --navy-900:#0a1730;
+    --green:#1e7f3f;
+    --green-400:#3f9d63;
+    /* Lifted green, for green ink sitting on the navy cover. */
+    --green-300:#5cc184;
+    --red:#e2101f;
+    --ink-900:#0d0e11;
+    --ink-700:#2c2e35;
+    --ink-600:#43464f;
+    --ink-500:#5f636e;
+    --ink-400:#8a8d97;
+    --ink-200:#d9dae0;
+    --ink-100:#ededf0;
+    --ink-50:#f7f7f8;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    color:var(--ink-700);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+    background:#fff;
+  }
+
+  .page{
+    position:relative;
+    width:297mm;
+    height:210mm;
+    overflow:hidden;
+    page-break-after:always;
+    background:#fff;
+    display:flex;
+    flex-direction:column;
+  }
+  .page:last-child{ page-break-after:auto; }
+
+  /* Content sits above the page watermark. */
+  .pad{ padding:13mm 15mm; display:flex; flex-direction:column; height:100%; position:relative; z-index:1; }
+
+  /* ---------------------------------------------------------- watermark */
+  /* Brand mark, ghosted into the top-right whitespace of every content
+     page. Parked there rather than page-centre because the content pages
+     are wall-to-wall opaque cards — a centred mark would be sliced up by
+     them. The top-right corner is clear on every page in the set. */
+  .wm{
+    position:absolute;
+    top:12mm; right:15mm;
+    width:40mm;
+    opacity:.11;
+    z-index:0;
+  }
+  .wm img{ display:block; width:100%; }
+
+  /* ---------------------------------------------------------------- logo */
+  /* Transparent, white-ink mark — sits straight on the dark page, no card. */
+  .logo{ width:68mm; }
+  .logo img{ display:block; width:100%; }
+
+  /* -------------------------------------------------------------- shared */
+  .eyebrow{
+    font-size:7pt;
+    font-weight:700;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--green);
+  }
+  .eyebrow.light{ color:var(--green-400); }
+
+  h1,h2,h3,h4{ color:var(--navy); font-weight:700; letter-spacing:-.01em; }
+
+  .page-head{ margin-bottom:7mm; }
+  .page-head h2{ font-size:22pt; line-height:1.12; margin-top:2.5mm; }
+  .page-head p{ font-size:9pt; color:var(--ink-500); margin-top:2.5mm; max-width:190mm; line-height:1.5; }
+  .rule{ height:1.1mm; width:22mm; background:var(--green); border-radius:1mm; margin-bottom:3.5mm; }
+
+  .foot{
+    margin-top:auto;
+    padding-top:4mm;
+    border-top:.35mm solid var(--ink-100);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:7pt;
+    color:var(--ink-400);
+    letter-spacing:.06em;
+  }
+  .foot b{ color:var(--navy); font-weight:700; }
+  .pno{
+    background:var(--navy);
+    color:#fff;
+    width:6mm; height:6mm;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:7pt; font-weight:700;
+  }
+
+  /* ========================================================== COVER PAGE */
+  /* Dark cover: full-bleed navy, white-ink logo, oversized ghosted brand
+     mark bleeding off the right edge. The back cover stays light, so the
+     document opens dark and closes clean. */
+  .cover{ background:var(--navy-900); color:#fff; }
+  .cover .pad{ z-index:3; padding-bottom:34mm; }
+
+  /* The logo art is navy ink on transparency, so it would vanish against
+     the navy page — knock it to flat white instead of shipping a second file. */
+  .cover .logo img,
+  .cover-wm img{ filter:brightness(0) invert(1); }
+
+  /* Oversized watermark, cropped by the right edge of the page. The box also
+     crops the lockup vertically to the AVRI ENERGY row — at this scale the
+     strap-line underneath would rake straight through the body copy. */
+  .cover-wm{
+    position:absolute;
+    top:47%; right:-58mm;
+    transform:translateY(-50%);
+    width:250mm;
+    height:44mm;
+    overflow:hidden;
+    opacity:.06;
+    z-index:1;
+  }
+  .cover-wm img{ display:block; width:100%; margin-top:-9mm; }
+
+  /* Depth behind the headline, and a wash off the bottom-right corner. */
+  .cover-glow{
+    position:absolute; z-index:0;
+    left:-70mm; top:-30mm; width:200mm; height:200mm;
+    background:radial-gradient(circle, rgba(30,127,63,.20) 0%, rgba(30,127,63,0) 68%);
+  }
+  .cover-wash{
+    position:absolute; z-index:0;
+    right:0; bottom:0; width:150mm; height:150mm;
+    background:radial-gradient(circle at bottom right, rgba(20,42,82,.9) 0%, rgba(10,23,48,0) 72%);
+  }
+
+  .cover-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .cover-meta{ text-align:right; font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); line-height:2; }
+  .cover-meta b{ color:#fff; font-weight:700; }
+
+  /* Rotated spine label down the left edge — an editorial marker that also
+     fills the tall empty gutter the dark page opens up. */
+  .cover-spine{
+    position:absolute;
+    left:6.5mm; top:50%;
+    transform:translateY(-50%) rotate(180deg);
+    writing-mode:vertical-rl;
+    font-size:7pt;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.34);
+    z-index:3;
+  }
+
+  .cover-mid{ margin-top:auto; margin-bottom:11mm; }
+  .cover .eyebrow{ color:var(--green-300); }
+  .cover .rule{ background:var(--green-300); }
+  .cover h1{
+    color:#fff;
+    font-size:43pt;
+    line-height:1.04;
+    letter-spacing:-.022em;
+    max-width:205mm;
+    margin-top:4mm;
+  }
+  .cover h1 span{ color:var(--green-300); }
+  .cover-lead{
+    margin-top:6.5mm;
+    font-size:10.5pt;
+    line-height:1.6;
+    color:rgba(255,255,255,.66);
+    max-width:148mm;
+  }
+  .cover-tag{
+    display:inline-block;
+    margin-top:7mm;
+    padding:2.2mm 5.5mm;
+    background:var(--green);
+    border-radius:10mm;
+    font-size:9pt;
+    font-weight:600;
+    letter-spacing:.05em;
+    color:#fff;
+  }
+
+  /* Stats read as four ruled columns rather than one long underline. */
+  .cover-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7mm;
+  }
+  /* Direct children only — a descendant selector would rule .v and .l too. */
+  .cover-stats > div{
+    border-top:.5mm solid rgba(255,255,255,.22);
+    padding-top:5mm;
+  }
+  .cover-stats .v{ font-size:23pt; font-weight:700; color:#fff; line-height:1; }
+  .cover-stats .v i{ font-style:normal; color:var(--green-300); }
+  .cover-stats .l{ font-size:7.5pt; color:rgba(255,255,255,.5); margin-top:2.5mm; letter-spacing:.06em; text-transform:uppercase; }
+
+  /* The shared closing band is navy-on-navy here — make it a hairline. */
+  .cover .back-band{ background:transparent; border-top:.35mm solid rgba(255,255,255,.16); }
+
+  /* ============================================================ ABOUT */
+  .two{ display:grid; grid-template-columns:1.15fr .85fr; gap:11mm; flex:1; }
+  .prose p{ font-size:9pt; line-height:1.65; color:var(--ink-600); margin-bottom:3.5mm; }
+  .prose p:last-child{ margin-bottom:0; }
+
+  .numbers{
+    background:var(--ink-50);
+    border:.35mm solid var(--ink-100);
+    border-radius:4mm;
+    padding:6mm;
+  }
+  .numbers-grid{ display:grid; grid-template-columns:1fr 1fr; gap:5mm; margin-top:4.5mm; }
+  .numbers .v{ font-size:17pt; font-weight:700; color:var(--navy); line-height:1; }
+  .numbers .l{ font-size:7.5pt; color:var(--ink-500); margin-top:1.5mm; line-height:1.35; }
+  .quote{
+    margin-top:5mm; padding-top:4mm;
+    border-top:.35mm solid var(--ink-200);
+    font-size:8pt; font-style:italic; line-height:1.55; color:var(--ink-600);
+  }
+
+  .mv{ display:grid; grid-template-columns:1fr 1fr; gap:6mm; margin-top:6mm; }
+  .mv-card{
+    background:var(--navy);
+    color:#fff;
+    border-radius:4mm;
+    padding:6mm;
+  }
+  .mv-card h3{ color:#fff; font-size:11pt; margin-top:3mm; line-height:1.25; }
+  .mv-card p{ font-size:8pt; line-height:1.55; color:rgba(255,255,255,.72); margin-top:3mm; }
+
+  .caps{ list-style:none; margin-top:4mm; }
+  .caps li{
+    font-size:8pt; line-height:1.62; color:var(--ink-600);
+    padding-left:4.5mm; position:relative;
+  }
+  .caps li::before{
+    content:""; position:absolute; left:0; top:1.6mm;
+    width:1.6mm; height:1.6mm; border-radius:50%; background:var(--green);
+  }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:2.5mm; margin-top:4mm; }
+  .chip{
+    font-size:7.5pt;
+    padding:1.8mm 4mm;
+    border:.35mm solid var(--ink-200);
+    border-radius:10mm;
+    color:var(--ink-600);
+    background:#fff;
+  }
+  .chip.solid{ background:var(--ink-50); }
+
+  /* ========================================================== SERVICES */
+  .grid4{ display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; flex:1; }
+  .svc{
+    border:.35mm solid var(--ink-100);
+    border-radius:3mm;
+    padding:4.5mm;
+    display:flex;
+    flex-direction:column;
+    background:#fff;
+    border-top:1mm solid var(--green);
+  }
+  .svc .n{ font-size:7pt; font-weight:700; color:var(--ink-400); letter-spacing:.1em; }
+  .svc h3{ font-size:9.5pt; line-height:1.2; margin-top:2mm; }
+  .svc p{ font-size:7.2pt; line-height:1.45; color:var(--ink-500); margin-top:2.5mm; }
+  .svc.cta{
+    background:var(--navy);
+    border-top-color:var(--red);
+    justify-content:center;
+  }
+  .svc.cta h3{ color:#fff; font-size:11pt; }
+  .svc.cta p{ color:rgba(255,255,255,.72); font-size:7.6pt; }
+
+  /* ========================================================== PRODUCTS */
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; flex:1; }
+  .grp{
+    border:.35mm solid var(--ink-100);
+    border-radius:3mm;
+    padding:5mm;
+    background:var(--ink-50);
+  }
+  .grp h3{ font-size:10pt; }
+  .grp .bar{ width:12mm; height:.9mm; background:var(--green); border-radius:1mm; margin:2.5mm 0 3.5mm; }
+  .grp ul{ list-style:none; }
+  .grp li{
+    font-size:7.6pt;
+    line-height:1.5;
+    color:var(--ink-600);
+    padding-left:4mm;
+    position:relative;
+  }
+  .grp li::before{
+    content:"";
+    position:absolute; left:0; top:1.6mm;
+    width:1.6mm; height:1.6mm;
+    border-radius:50%;
+    background:var(--green);
+  }
+  .grp.dark{ background:var(--navy); border-color:var(--navy); }
+  .grp.dark h3{ color:#fff; }
+  .grp.dark li{ color:rgba(255,255,255,.75); }
+  .grp.dark li::before{ background:var(--green-400); }
+  .grp.dark p{ font-size:7.8pt; line-height:1.55; color:rgba(255,255,255,.72); }
+
+  /* ======================================================== INDUSTRIES */
+  .ind{
+    border:.35mm solid var(--ink-100);
+    border-left:1mm solid var(--navy);
+    border-radius:2mm;
+    padding:4mm 4.5mm;
+    background:#fff;
+  }
+  .ind h3{ font-size:9pt; line-height:1.2; }
+  .ind p{ font-size:7pt; line-height:1.45; color:var(--ink-500); margin-top:2mm; }
+  .ind ul{ list-style:none; margin-top:2.5mm; }
+  .ind li{ font-size:6.8pt; color:var(--ink-600); padding-left:3mm; position:relative; line-height:1.45; }
+  .ind li::before{ content:"›"; position:absolute; left:0; color:var(--green); font-weight:700; }
+
+  /* ========================================================== PROJECTS */
+  .prj{
+    border:.35mm solid var(--ink-100);
+    border-radius:3mm;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .prj-top{ background:var(--navy); color:#fff; padding:4mm 4.5mm; }
+  .prj-top .cat{ font-size:6.5pt; letter-spacing:.14em; text-transform:uppercase; color:var(--green-400); font-weight:700; }
+  .prj-top h3{ color:#fff; font-size:9.5pt; line-height:1.22; margin-top:1.8mm; }
+  .prj-body{ padding:4mm 4.5mm; flex:1; display:flex; flex-direction:column; }
+  .prj-meta{ font-size:6.8pt; color:var(--ink-400); letter-spacing:.05em; text-transform:uppercase; }
+  .prj-body p{ font-size:7.2pt; line-height:1.45; color:var(--ink-600); margin-top:2.5mm; }
+  .facts{ display:flex; gap:2.5mm; margin-top:auto; padding-top:3.5mm; }
+  .facts div{ flex:1; }
+  .facts .fv{ font-size:7.8pt; font-weight:700; color:var(--navy); line-height:1; white-space:nowrap; }
+  .facts .fl{ font-size:5.8pt; color:var(--ink-400); margin-top:1.4mm; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
+
+  /* =========================================================== PROCESS */
+  .steps{ display:grid; grid-template-columns:repeat(6,1fr); gap:4mm; }
+  .step{ position:relative; padding-top:8mm; }
+  .step .num{
+    position:absolute; top:0; left:0;
+    font-size:16pt; font-weight:700; color:var(--ink-100); line-height:1;
+  }
+  .step h3{ font-size:8.6pt; line-height:1.22; }
+  .step p{ font-size:7pt; line-height:1.45; color:var(--ink-500); margin-top:2mm; }
+  .steps-line{ height:.35mm; background:var(--ink-100); margin:5mm 0 5mm; }
+
+  .why{ display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; }
+  .why-card{
+    border-radius:3mm;
+    padding:5mm;
+    background:var(--ink-50);
+    border:.35mm solid var(--ink-100);
+  }
+  .why-card h3{ font-size:9.5pt; line-height:1.2; }
+  .why-card p{ font-size:7.4pt; line-height:1.5; color:var(--ink-500); margin-top:2.5mm; }
+  .why-card .tick{
+    width:5mm; height:5mm; border-radius:50%;
+    background:var(--green); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:7pt; font-weight:700; margin-bottom:3mm;
+  }
+
+  /* ==================================================== CERTS + QUOTES */
+  .certs{ display:grid; grid-template-columns:repeat(6,1fr); gap:4mm; }
+  .cert{
+    border:.35mm solid var(--ink-200);
+    border-radius:3mm;
+    padding:4.5mm;
+    text-align:center;
+  }
+  .cert .code{
+    font-size:10pt; font-weight:700; color:var(--navy);
+    padding-bottom:2.5mm; margin-bottom:2.5mm;
+    border-bottom:.35mm solid var(--ink-100);
+  }
+  .cert h3{ font-size:7.6pt; line-height:1.25; }
+  .cert p{ font-size:6.6pt; line-height:1.4; color:var(--ink-500); margin-top:2mm; }
+
+  .quotes{ display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; }
+  .qcard{
+    border-radius:3mm;
+    padding:5mm;
+    background:var(--ink-50);
+    border:.35mm solid var(--ink-100);
+    display:flex; flex-direction:column;
+  }
+  .qmark{ font-size:20pt; font-weight:700; color:var(--green); line-height:.7; }
+  .qcard p{ font-size:8.8pt; line-height:1.62; color:var(--ink-600); margin:3mm 0 auto; }
+  .qwho{ margin-top:auto; padding-top:3.5mm; font-size:7pt; color:var(--ink-400); line-height:1.45; }
+  .qwho b{ display:block; color:var(--navy); font-size:7.8pt; }
+
+  /* ============================================================= BACK */
+  /* Light back cover: white page, brand mark in full colour, navy closing band. */
+  .back{ background:#fff; color:var(--ink-700); }
+  .back .pad{ position:relative; z-index:2; padding-bottom:32mm; }
+  .back .cover-meta{ color:var(--ink-400); }
+  .back .cover-meta b{ color:var(--navy); }
+  .back h2{ color:var(--navy); font-size:26pt; line-height:1.12; margin-top:3mm; }
+  .back-lead{ font-size:9.5pt; line-height:1.6; color:var(--ink-500); margin-top:5mm; max-width:120mm; }
+  .contact-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:7mm; margin-top:9mm; }
+  .cbox{ border-top:.6mm solid var(--navy); padding-top:4mm; }
+  .cbox .ct{ font-size:7pt; letter-spacing:.16em; text-transform:uppercase; color:var(--green); font-weight:700; }
+  .cbox .cv{ font-size:9pt; color:var(--navy); font-weight:600; margin-top:3mm; line-height:1.55; }
+  .cbox .cv span{ display:block; color:var(--ink-500); font-size:8.2pt; font-weight:400; }
+
+  .back-band{
+    position:absolute; left:0; right:0; bottom:0;
+    background:var(--navy-900);
+    padding:6mm 15mm;
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:7.5pt; color:rgba(255,255,255,.55); line-height:1.6;
+    z-index:3;
+  }
+  .back-band b{ color:#fff; font-size:8.5pt; }
+  .back-accent{
+    position:absolute; left:0; right:0; bottom:22mm;
+    height:1.2mm; background:var(--green); z-index:3;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ 1. COVER -->
+<section class="page cover">
+  <div class="cover-glow"></div>
+  <div class="cover-wash"></div>
+  <div class="cover-wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="cover-spine">Company Profile</div>
+
+  <div class="pad">
+    <div class="cover-top">
+      <div class="logo"><img src="__LOGO_COLOR__" alt="Avri Energy"></div>
+      <div class="cover-meta">
+        Electrical EPC &amp; Renewable Energy<br>
+        Ghaziabad, U.P.<br>
+        <b>Established 2015</b>
+      </div>
+    </div>
+
+    <div class="cover-mid">
+      <div class="rule"></div>
+      <div class="eyebrow">Avri Energy Private Limited</div>
+      <h1>Powering industry,<br>utilities and <span>infrastructure</span><br>across India.</h1>
+      <p class="cover-lead">
+        Turnkey HT &amp; LT works, substations, transformers, smart metering, solar and
+        EV charging infrastructure — engineered, built and maintained by one accountable team.
+      </p>
+      <div class="cover-tag">Reliable Power. Trusted Partner.</div>
+    </div>
+
+    <div class="cover-stats">
+      <div><div class="v">80,000<i>+</i></div><div class="l">Smart meters installed</div></div>
+      <div><div class="v">50<i>+</i></div><div class="l">Projects completed</div></div>
+      <div><div class="v">10<i>+</i></div><div class="l">States served</div></div>
+      <div><div class="v">99<i>%</i></div><div class="l">Client satisfaction</div></div>
+    </div>
+  </div>
+
+  <div class="back-accent"></div>
+  <div class="back-band">
+    <div>
+      <b>www.avrienergy.com</b><br>
+      info@avrienergy.com · sales@avrienergy.com
+    </div>
+    <div style="text-align:right">
+      <b>+91 89790 94813 · +91 96431 75087</b><br>
+      Modinagar, Ghaziabad, Uttar Pradesh — 201204
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 2. ABOUT -->
+<section class="page">
+  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="pad">
+    <div class="page-head">
+      <div class="rule"></div>
+      <div class="eyebrow">Who we are</div>
+      <h2>An engineering-led electrical EPC<br>and renewable energy company</h2>
+    </div>
+
+    <div class="two">
+      <div class="prose">
+        <p>
+          Avri Energy began as an electrical contracting outfit serving the industrial belt
+          around Modinagar and Ghaziabad. Our first customers were plant owners tired of
+          tripping panels, overheating cables, and contractors who disappeared after the
+          final payment.
+        </p>
+        <p>
+          We grew by doing the unglamorous things properly — correct cable sizing, honest
+          earthing, protection settings that were genuinely calculated, and a phone that
+          gets answered when something fails at two in the morning. Word travelled, and so
+          did we: from wiring and panels into transformers, substations, automation and,
+          as the economics turned, into solar and EV infrastructure.
+        </p>
+        <p>
+          Today we deliver turnkey EPC packages for utilities, government departments,
+          industry and infrastructure developers. The engineering discipline has not
+          changed — only the size of the systems it is applied to.
+        </p>
+
+        <div class="mv">
+          <div class="mv-card">
+            <div class="eyebrow light">Our mission</div>
+            <h3>Make dependable power ordinary</h3>
+            <p>
+              Deliver electrical and renewable energy systems that are correctly engineered,
+              properly installed and genuinely supported — so our clients can stop thinking
+              about their power supply.
+            </p>
+          </div>
+          <div class="mv-card">
+            <div class="eyebrow light">Our vision</div>
+            <h3>India's most trusted energy partner</h3>
+            <p>
+              To be the first call for electrical infrastructure across the regions we serve,
+              and to move a meaningful share of that demand onto clean, self-generated energy.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div>
+        <div class="numbers">
+          <div class="eyebrow">By the numbers</div>
+          <div class="numbers-grid">
+            <div><div class="v">80,000+</div><div class="l">Smart meters installed</div></div>
+            <div><div class="v">50+</div><div class="l">Projects completed</div></div>
+            <div><div class="v">10+</div><div class="l">States served</div></div>
+            <div><div class="v">99%</div><div class="l">Client satisfaction</div></div>
+          </div>
+          <div class="quote">
+            “Reliable Power. Trusted Partner.” is not a slogan we picked for a logo.
+            It is the only thing our clients actually buy from us.
+          </div>
+        </div>
+
+        <div style="margin-top:6mm">
+          <div class="eyebrow">At a glance</div>
+          <div style="margin-top:3.5mm; font-size:8pt; line-height:1.72; color:var(--ink-600)">
+            <div><b style="color:var(--navy)">Legal name</b> &nbsp;·&nbsp; Avri Energy Private Limited</div>
+            <div><b style="color:var(--navy)">Established</b> &nbsp;·&nbsp; 2015</div>
+            <div><b style="color:var(--navy)">Headquarters</b> &nbsp;·&nbsp; Modinagar, Ghaziabad, U.P.</div>
+            <div><b style="color:var(--navy)">Core region</b> &nbsp;·&nbsp; Delhi NCR &amp; West Uttar Pradesh</div>
+            <div><b style="color:var(--navy)">Reach</b> &nbsp;·&nbsp; Pan-India for EPC contracts</div>
+            <div><b style="color:var(--navy)">Sectors</b> &nbsp;·&nbsp; Utilities, Government, Industry, Infra</div>
+          </div>
+        </div>
+
+        <div style="margin-top:6mm">
+          <div class="eyebrow">In-house capability</div>
+          <ul class="caps">
+            <li>In-house design &amp; drafting team</li>
+            <li>Directly employed installation crews</li>
+            <li>Panel assembly &amp; pre-dispatch testing</li>
+            <li>Calibrated test instruments &amp; thermography</li>
+            <li>Utility liaison &amp; statutory approvals</li>
+            <li>Post-commissioning service desk</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div><b>AVRI ENERGY</b> &nbsp;·&nbsp; COMPANY PROFILE</div>
+      <div class="pno">02</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= 3. SERVICES -->
+<section class="page">
+  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="pad">
+    <div class="page-head">
+      <div class="rule"></div>
+      <div class="eyebrow">What we do</div>
+      <h2>Fourteen service lines, one accountable contract</h2>
+      <p>From detailed engineering and procurement through construction, testing and statutory
+         clearance — to the maintenance contract that keeps the asset performing afterwards.</p>
+    </div>
+
+    <div class="grid4">
+      <div class="svc"><div class="n">01</div><h3>Electrical EPC &amp; Turnkey Projects</h3><p>Single-point responsibility for engineering, procurement and construction of complete electrical systems.</p></div>
+      <div class="svc"><div class="n">02</div><h3>HT &amp; LT Electrical Works</h3><p>High- and low-tension distribution networks built to IS, CEA and utility standards.</p></div>
+      <div class="svc"><div class="n">03</div><h3>Substations</h3><p>Indoor and outdoor substations from 11 kV up to 220 kV, built turnkey.</p></div>
+      <div class="svc"><div class="n">04</div><h3>Transformers</h3><p>Supply, erection, testing, overhaul and maintenance of distribution and power transformers.</p></div>
+
+      <div class="svc"><div class="n">05</div><h3>Smart Metering Solutions</h3><p>Smart and prepaid metering roll-outs with communication, integration and data validation.</p></div>
+      <div class="svc"><div class="n">06</div><h3>Energy Management</h3><p>Audits, monitoring and correction that turn energy data into a lower bill.</p></div>
+      <div class="svc"><div class="n">07</div><h3>Solar Solutions</h3><p>Rooftop and ground-mount solar plants, delivered turnkey with net metering and O&amp;M.</p></div>
+      <div class="svc"><div class="n">08</div><h3>Electrical Automation</h3><p>PLC, SCADA and control systems that make plants observable and repeatable.</p></div>
+
+      <div class="svc"><div class="n">09</div><h3>Operation &amp; Maintenance</h3><p>Planned maintenance and rapid response that protect uptime and asset life.</p></div>
+      <div class="svc"><div class="n">10</div><h3>Industrial &amp; Commercial Works</h3><p>Complete internal electrification for factories, warehouses and commercial buildings.</p></div>
+      <div class="svc"><div class="n">11</div><h3>Street Lighting</h3><p>LED and solar street lighting projects, from photometric design to centralised control.</p></div>
+      <div class="svc"><div class="n">12</div><h3>EV Charging Infrastructure</h3><p>AC and DC charging stations with the upstream power infrastructure they need.</p></div>
+
+      <div class="svc"><div class="n">13</div><h3>Supply of Electrical Equipment</h3><p>Material supply from approved makes against your BOQ, with full test documentation.</p></div>
+      <div class="svc"><div class="n">14</div><h3>Statutory Liaison &amp; Approvals</h3><p>DISCOM applications, net metering, inspections and handover dossiers managed end to end.</p></div>
+      <div class="svc cta" style="grid-column:span 2">
+        <div class="eyebrow light">Talk to us</div>
+        <h3>Tell us the load, the site and the date.</h3>
+        <p>We will come back with a costed scope, a drawing set and a programme you can hold us to.<br>
+           sales@avrienergy.com &nbsp;·&nbsp; +91 89790 94813</p>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div><b>AVRI ENERGY</b> &nbsp;·&nbsp; SERVICES</div>
+      <div class="pno">03</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= 4. PRODUCTS -->
+<section class="page">
+  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="pad">
+    <div class="page-head">
+      <div class="rule"></div>
+      <div class="eyebrow">Products &amp; supply</div>
+      <h2>Equipment from approved makes, with test documentation</h2>
+      <p>Item-wise supply against your BOQ — correctly rated, genuinely sourced and delivered
+         with certificates. Available on a material-only basis or as part of a turnkey package.</p>
+    </div>
+
+    <div class="grid3">
+      <div class="grp">
+        <h3>Transformers</h3><div class="bar"></div>
+        <ul>
+          <li>Oil-immersed distribution transformers, 25 kVA – 2500 kVA</li>
+          <li>Cast-resin dry-type transformers</li>
+          <li>Power transformers up to 220 kV</li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h3>Panels &amp; Switchgear</h3><div class="bar"></div>
+        <ul>
+          <li>HT metal-clad switchgear panels &amp; metering cubicles</li>
+          <li>LT PCC, MCC and APFC panels</li>
+          <li>SF6 ring main units (RMU)</li>
+          <li>Indoor VCB panels &amp; outdoor pole-mounted VCB</li>
+          <li>ACB, MCCB and MCB protection range</li>
+          <li>Sandwich bus ducts</li>
+          <li>LT distribution &amp; feeder pillar boxes</li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h3>Metering &amp; Instrument Transformers</h3><div class="bar"></div>
+        <ul>
+          <li>Single and three-phase smart meters</li>
+          <li>Three-phase CT-operated smart meters</li>
+          <li>DT (distribution transformer) meters</li>
+          <li>LTCT energy meters</li>
+          <li>Current &amp; potential transformers (CT/PT)</li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h3>Cables &amp; Accessories</h3><div class="bar"></div>
+        <ul>
+          <li>HT XLPE power cable</li>
+          <li>LT XLPE &amp; PVC power cable</li>
+          <li>Control &amp; instrumentation cable</li>
+          <li>Aerial bunched (AB) cable</li>
+          <li>Jointing kits &amp; terminations</li>
+          <li>Installation accessories &amp; junction boxes</li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h3>Lighting, Poles, Solar &amp; EV</h3><div class="bar"></div>
+        <ul>
+          <li>Galvanised street light poles &amp; high-mast lighting</li>
+          <li>LED street light luminaires</li>
+          <li>Solar modules, inverters and mounting structures</li>
+          <li>EV charging stations, AC and DC</li>
+          <li>Earthing materials and insulators</li>
+        </ul>
+      </div>
+
+      <div class="grp dark">
+        <h3 style="color:#fff">Supplied the right way</h3><div class="bar" style="background:var(--green-400)"></div>
+        <ul>
+          <li>Approved and tested makes only</li>
+          <li>Ratings verified against your load calculations</li>
+          <li>Routine and type test certificates with every despatch</li>
+          <li>Pre-dispatch inspection on request</li>
+          <li>GST-compliant billing for institutional buyers</li>
+        </ul>
+        <p style="margin-top:4mm; padding-top:3.5mm; border-top:.35mm solid rgba(255,255,255,.2)">
+          Send us your BOQ at <b style="color:#fff">sales@avrienergy.com</b> and we will quote item-wise.
+        </p>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div><b>AVRI ENERGY</b> &nbsp;·&nbsp; PRODUCTS</div>
+      <div class="pno">04</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= 5. INDUSTRIES -->
+<section class="page">
+  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="pad">
+    <div class="page-head">
+      <div class="rule"></div>
+      <div class="eyebrow">Industries we serve</div>
+      <h2>Thirteen sectors, each with its own rules</h2>
+      <p>A utility inspection regime, a CPWD schedule and a hospital's essential-supply
+         segregation are not the same problem. We work to the standard the sector actually uses.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; flex:1">
+      <div class="ind"><h3>Power Utilities</h3><ul><li>Substation erection &amp; augmentation</li><li>Feeder bifurcation, network strengthening</li><li>AT&amp;C loss reduction programmes</li></ul></div>
+      <div class="ind"><h3>DISCOMs</h3><ul><li>Smart &amp; prepaid metering roll-outs</li><li>LT augmentation and re-conductoring</li><li>Consumer indexing and GIS survey</li></ul></div>
+      <div class="ind"><h3>Government Departments</h3><ul><li>Departmental electrical works</li><li>Compliance-ready documentation</li><li>Standard tender conditions</li></ul></div>
+      <div class="ind"><h3>CPWD</h3><ul><li>Internal electrification of buildings</li><li>External services &amp; street lighting</li><li>To CPWD schedule and specification</li></ul></div>
+
+      <div class="ind"><h3>Renewable Energy</h3><ul><li>Rooftop &amp; ground-mount solar EPC</li><li>Evacuation lines, pooling substations</li><li>Long-term plant O&amp;M</li></ul></div>
+      <div class="ind"><h3>Industries</h3><ul><li>Captive substations, plant distribution</li><li>MCC, PCC and process automation</li><li>Energy audits, power factor correction</li></ul></div>
+      <div class="ind"><h3>Commercial Buildings</h3><ul><li>Complete building electrification</li><li>Standby power and UPS systems</li><li>Lighting design, energy management</li></ul></div>
+      <div class="ind"><h3>Residential Projects</h3><ul><li>Township &amp; society electrification</li><li>Substations, DG backup, lift power</li><li>Common-area lighting and metering</li></ul></div>
+
+      <div class="ind"><h3>Infrastructure Projects</h3><ul><li>Highway and tunnel lighting</li><li>Metro electrical packages</li><li>Utility shifting, power distribution</li></ul></div>
+      <div class="ind"><h3>Railways</h3><ul><li>Station electrification, platform lighting</li><li>Auxiliary substations and feeders</li><li>Supply for signalling &amp; telecom rooms</li></ul></div>
+      <div class="ind"><h3>Airports</h3><ul><li>Terminal electrification and lighting</li><li>Standby power, UPS, load segregation</li><li>Airside and apron distribution</li></ul></div>
+      <div class="ind"><h3>Hospitals</h3><ul><li>Essential / non-essential segregation</li><li>DG backup, UPS, medical-grade earthing</li><li>OT and ICU power distribution</li></ul></div>
+
+      <div class="ind" style="grid-column:span 2"><h3>Smart Cities</h3><p>Smart lighting, metering and connected infrastructure for urban modernisation programmes.</p><ul><li>Centralised smart street lighting</li><li>Smart metering and command-centre integration</li><li>EV charging and public infrastructure</li></ul></div>
+      <div class="ind" style="grid-column:span 2; border-left-color:var(--green); background:var(--ink-50)">
+        <h3>Not on the list?</h3>
+        <p>If it carries current, we have probably built it. Send us the drawings or the tender
+           document and we will tell you honestly whether we are the right contractor for it.</p>
+        <ul><li>info@avrienergy.com &nbsp;·&nbsp; +91 89790 94813</li></ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div><b>AVRI ENERGY</b> &nbsp;·&nbsp; INDUSTRIES</div>
+      <div class="pno">05</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= 6. PROJECTS -->
+<section class="page">
+  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="pad">
+    <div class="page-head">
+      <div class="rule"></div>
+      <div class="eyebrow">Selected projects</div>
+      <h2>Delivered, energised and still running</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:1fr 1fr; gap:4mm; flex:1">
+      <div class="prj">
+        <div class="prj-top"><div class="cat">Substations</div><h3>33/11 kV Substation — Industrial Area</h3></div>
+        <div class="prj-body">
+          <div class="prj-meta">State Distribution Utility · Ghaziabad, U.P. · 2024</div>
+          <p>Turnkey erection of a 33/11 kV substation including switchyard, protection panels, transformer erection and charging.</p>
+          <div class="facts">
+            <div><div class="fv">2 × 5 MVA</div><div class="fl">Capacity</div></div>
+            <div><div class="fv">33/11 kV</div><div class="fl">Voltage</div></div>
+            <div><div class="fv">7 months</div><div class="fl">Duration</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prj">
+        <div class="prj-top"><div class="cat">Solar Solutions</div><h3>1.2 MW Rooftop Solar Plant</h3></div>
+        <div class="prj-body">
+          <div class="prj-meta">Auto Components Manufacturer · Meerut, U.P. · 2024</div>
+          <p>Design, supply and installation of a captive rooftop solar plant with net metering and a five-year O&amp;M contract.</p>
+          <div class="facts">
+            <div><div class="fv">1.2 MWp</div><div class="fl">Capacity</div></div>
+            <div><div class="fv">1.7 GWh</div><div class="fl">Annual yield</div></div>
+            <div><div class="fv">4 months</div><div class="fl">Duration</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prj">
+        <div class="prj-top"><div class="cat">Smart Metering</div><h3>Smart Metering Roll-out</h3></div>
+        <div class="prj-body">
+          <div class="prj-meta">Distribution Company · West Uttar Pradesh · 2023</div>
+          <p>Survey, installation and HES integration of smart meters across residential and commercial consumers.</p>
+          <div class="facts">
+            <div><div class="fv">18,000+</div><div class="fl">Meters</div></div>
+            <div><div class="fv">HES / MDM</div><div class="fl">Integration</div></div>
+            <div><div class="fv">11 months</div><div class="fl">Duration</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prj">
+        <div class="prj-top"><div class="cat">Street Lighting</div><h3>Municipal LED Street Lighting</h3></div>
+        <div class="prj-body">
+          <div class="prj-meta">Municipal Corporation · Modinagar, U.P. · 2023</div>
+          <p>Retrofit of conventional street lighting to LED with feeder pillars and centralised control and monitoring.</p>
+          <div class="facts">
+            <div><div class="fv">6,400</div><div class="fl">Luminaires</div></div>
+            <div><div class="fv">58%</div><div class="fl">Energy saved</div></div>
+            <div><div class="fv">6 months</div><div class="fl">Duration</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prj">
+        <div class="prj-top"><div class="cat">HT &amp; LT Works</div><h3>HT &amp; LT Network — Warehousing Park</h3></div>
+        <div class="prj-body">
+          <div class="prj-meta">Logistics Developer · Hapur, U.P. · 2023</div>
+          <p>Complete HT ring main, LT distribution and internal electrification across eight warehouse blocks.</p>
+          <div class="facts">
+            <div><div class="fv">4.5 MW</div><div class="fl">Connected load</div></div>
+            <div><div class="fv">22 km</div><div class="fl">Cabling</div></div>
+            <div><div class="fv">9 months</div><div class="fl">Duration</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prj">
+        <div class="prj-top"><div class="cat">EV Charging</div><h3>Highway EV Charging Hub</h3></div>
+        <div class="prj-body">
+          <div class="prj-meta">Mobility Operator · NH-58 Corridor · 2024</div>
+          <p>Power infrastructure and installation of DC fast and AC charging points, including transformer and panel works.</p>
+          <div class="facts">
+            <div><div class="fv">12 points</div><div class="fl">Chargers</div></div>
+            <div><div class="fv">600 kW</div><div class="fl">Capacity</div></div>
+            <div><div class="fv">5 months</div><div class="fl">Duration</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prj">
+        <div class="prj-top"><div class="cat">Automation</div><h3>Plant Automation Upgrade</h3></div>
+        <div class="prj-body">
+          <div class="prj-meta">Process Industry · Ghaziabad, U.P. · 2022</div>
+          <p>PLC and SCADA upgrade with new MCC panels, VFD integration and operator HMI stations.</p>
+          <div class="facts">
+            <div><div class="fv">14 MCC</div><div class="fl">Panels</div></div>
+            <div><div class="fv">900+</div><div class="fl">I/O points</div></div>
+            <div><div class="fv">5 months</div><div class="fl">Duration</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prj">
+        <div class="prj-top"><div class="cat">Commercial Works</div><h3>Institutional Campus Electrification</h3></div>
+        <div class="prj-body">
+          <div class="prj-meta">Educational Institution · Muzaffarnagar, U.P. · 2022</div>
+          <p>Internal and external electrification of an academic campus with substation, DG backup and campus lighting.</p>
+          <div class="facts">
+            <div><div class="fv">3.2 lakh</div><div class="fl">Built-up</div></div>
+            <div><div class="fv">1.6 MVA</div><div class="fl">Substation</div></div>
+            <div><div class="fv">10 months</div><div class="fl">Duration</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div><b>AVRI ENERGY</b> &nbsp;·&nbsp; PROJECTS</div>
+      <div class="pno">06</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================ 7. PROCESS + WHY US -->
+<section class="page">
+  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="pad">
+    <div class="page-head">
+      <div class="rule"></div>
+      <div class="eyebrow">How we work</div>
+      <h2>Six stages, no surprises</h2>
+      <p>The same disciplined sequence on a ten-lakh contract and a ten-crore one.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step"><div class="num">01</div><h3>Consultation &amp; Survey</h3><p>We visit the site, study the load profile and establish what the installation genuinely needs to do.</p></div>
+      <div class="step"><div class="num">02</div><h3>Engineering &amp; Proposal</h3><p>Detailed design, BOQ and a transparent commercial proposal with no hidden line items.</p></div>
+      <div class="step"><div class="num">03</div><h3>Procurement</h3><p>Material sourced from approved makes, inspected and delivered against the project programme.</p></div>
+      <div class="step"><div class="num">04</div><h3>Execution</h3><p>Construction by our own supervised crews, with weekly progress reporting and safety oversight.</p></div>
+      <div class="step"><div class="num">05</div><h3>Testing &amp; Handover</h3><p>Pre-commissioning tests, statutory approvals and a complete handover dossier with drawings.</p></div>
+      <div class="step"><div class="num">06</div><h3>Operation &amp; Maintenance</h3><p>Scheduled preventive maintenance and rapid breakdown response keep the asset performing.</p></div>
+    </div>
+
+    <div class="steps-line"></div>
+
+    <div class="eyebrow">Why clients choose us</div>
+    <div class="why" style="margin-top:4mm; flex:1; grid-template-rows:1fr 1fr">
+      <div class="why-card"><div class="tick">✓</div><h3>Single-Point Accountability</h3><p>Design, supply, execution and maintenance sit with one team, so nothing falls between vendors.</p></div>
+      <div class="why-card"><div class="tick">✓</div><h3>Engineering Discipline</h3><p>Every cable size, protection setting and drawing is calculated and justified before it reaches site.</p></div>
+      <div class="why-card"><div class="tick">✓</div><h3>Safety Without Exception</h3><p>Documented method statements, PPE compliance and trained supervision on every site, every day.</p></div>
+      <div class="why-card"><div class="tick">✓</div><h3>On-Time Delivery</h3><p>Committed programmes with weekly reporting, so you always know exactly where the project stands.</p></div>
+      <div class="why-card"><div class="tick">✓</div><h3>In-House Capability</h3><p>Our own design team and installation crews mean your schedule does not depend on somebody else's.</p></div>
+      <div class="why-card"><div class="tick">✓</div><h3>Long-Term Support</h3><p>We stay after energisation with maintenance contracts, spares and a responsive service desk.</p></div>
+    </div>
+
+    <div class="foot">
+      <div><b>AVRI ENERGY</b> &nbsp;·&nbsp; OUR PROCESS</div>
+      <div class="pno">07</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================== 8. CREDENTIALS + VOICE -->
+<section class="page">
+  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="pad">
+    <div class="page-head">
+      <div class="rule"></div>
+      <div class="eyebrow">Credentials</div>
+      <h2>Certified, licensed and compliant</h2>
+    </div>
+
+    <div class="certs">
+      <div class="cert"><div class="code">ISO 9001</div><h3>Quality Management</h3><p>Documented quality processes across engineering, procurement and execution.</p></div>
+      <div class="cert"><div class="code">ISO 14001</div><h3>Environmental Management</h3><p>Waste, disposal and environmental controls applied on every site.</p></div>
+      <div class="cert"><div class="code">ISO 45001</div><h3>Occupational Health &amp; Safety</h3><p>Method statements, PPE discipline and incident reporting as standard practice.</p></div>
+      <div class="cert"><div class="code">Class A</div><h3>Electrical Contractor Licence</h3><p>Licensed to execute HT and LT electrical works under state regulation.</p></div>
+      <div class="cert"><div class="code">MSME</div><h3>Registered Enterprise</h3><p>Registered under the Government of India MSME framework.</p></div>
+      <div class="cert"><div class="code">GST</div><h3>GST Compliant</h3><p>Fully compliant billing and documentation for institutional buyers.</p></div>
+    </div>
+
+    <div style="margin-top:8mm">
+      <div class="eyebrow">Clients we serve</div>
+      <div class="chips" style="margin-top:3.5mm">
+        <span class="chip">State Power Utility</span>
+        <span class="chip">Municipal Corporation</span>
+        <span class="chip">Auto Components Ltd</span>
+        <span class="chip">Logistics Developer</span>
+        <span class="chip">Process Industries</span>
+        <span class="chip">Educational Trust</span>
+        <span class="chip">Mobility Operator</span>
+        <span class="chip">Infra Developers</span>
+      </div>
+    </div>
+
+    <div style="margin-top:8mm">
+      <div class="eyebrow">In their words</div>
+    </div>
+    <div class="quotes" style="margin-top:4mm; flex:1">
+      <div class="qcard">
+        <div class="qmark">“</div>
+        <p>They took over a substation package that was already behind schedule and still energised it on the revised date. The documentation at handover was the cleanest we have received.</p>
+        <div class="qwho"><b>Project Head</b>Transmission Projects, State Power Utility</div>
+      </div>
+      <div class="qcard">
+        <div class="qmark">“</div>
+        <p>Our rooftop plant has run for two summers without an unplanned outage. When a string tripped, their team was on site the same day.</p>
+        <div class="qwho"><b>Plant Manager</b>Manufacturing Operations, Auto Components Ltd</div>
+      </div>
+      <div class="qcard">
+        <div class="qmark">“</div>
+        <p>What stood out was the honesty during design. They talked us out of an oversized system and saved us a substantial amount of capital.</p>
+        <div class="qwho"><b>Director</b>Facilities &amp; Infrastructure, Educational Trust</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div><b>AVRI ENERGY</b> &nbsp;·&nbsp; CREDENTIALS</div>
+      <div class="pno">08</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= 9. BACK -->
+<section class="page back">
+  <div class="pad">
+    <div class="cover-top">
+      <div class="logo"><img src="__LOGO_COLOR__" alt="Avri Energy"></div>
+      <div class="cover-meta">
+        <b>Let's talk</b><br>
+        Monday – Saturday, 9:30 AM – 6:30 PM<br>
+        Sunday closed
+      </div>
+    </div>
+
+    <div style="margin-top:13mm">
+      <div class="rule"></div>
+      <div class="eyebrow">Get in touch</div>
+      <h2>Tell us what needs power.<br>We will tell you how to get it there.</h2>
+      <p class="back-lead">
+        Whether it is a tender document, a single-line diagram or just a load figure on the
+        back of an envelope — send it across and we will come back with a straight answer.
+      </p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="cbox">
+        <div class="ct">Call</div>
+        <div class="cv">+91 89790 94813<span>+91 96431 75087</span><span>Landline · +91 1232 316164</span></div>
+      </div>
+      <div class="cbox">
+        <div class="ct">Write</div>
+        <div class="cv">info@avrienergy.com<span>sales@avrienergy.com</span><span>WhatsApp · +91 89790 94813</span></div>
+      </div>
+      <div class="cbox">
+        <div class="ct">Visit</div>
+        <div class="cv">Office No. 3, Aurangabad Gadana<span>Modinagar, Ghaziabad</span><span>Uttar Pradesh — 201204</span></div>
+      </div>
+      <div class="cbox">
+        <div class="ct">Online</div>
+        <div class="cv">www.avrienergy.com<span>Services · Products · Projects</span><span>Request a quote online</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:11mm">
+      <div class="eyebrow">What we deliver</div>
+      <div class="chips" style="margin-top:4mm">
+        <span class="chip">Electrical EPC &amp; Turnkey Projects</span>
+        <span class="chip">HT &amp; LT Electrical Works</span>
+        <span class="chip">Substations up to 220 kV</span>
+        <span class="chip">Transformers</span>
+        <span class="chip">Smart Metering</span>
+        <span class="chip">Energy Management</span>
+        <span class="chip">Solar Solutions</span>
+        <span class="chip">Electrical Automation</span>
+        <span class="chip">Operation &amp; Maintenance</span>
+        <span class="chip">Industrial &amp; Commercial Works</span>
+        <span class="chip">Street Lighting</span>
+        <span class="chip">EV Charging Infrastructure</span>
+        <span class="chip">Supply of Electrical Equipment</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-accent"></div>
+  <div class="back-band">
+    <div>
+      <b>AVRI ENERGY PRIVATE LIMITED</b><br>
+      Electrical EPC &amp; Renewable Energy · Established 2015
+    </div>
+    <div style="text-align:right">
+      <b>Reliable Power. Trusted Partner.</b><br>
+      www.avrienergy.com · info@avrienergy.com
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

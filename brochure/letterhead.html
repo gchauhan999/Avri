@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Avri Energy — Letterhead</title>
+<style>
+  @page { size: 210mm 297mm; margin: 0; }
+
+  :root{
+    --navy:#142a52;
+    --navy-900:#0a1730;
+    --green:#1e7f3f;
+    --green-400:#3f9d63;
+    --red:#e2101f;
+    --ink-600:#43464f;
+    --ink-500:#5f636e;
+    --ink-400:#8a8d97;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    color:var(--ink-600);
+    background:#fff;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
+  .sheet{
+    position:relative;
+    width:210mm;
+    height:297mm;
+    overflow:hidden;
+    background:#fff;
+  }
+
+  /* ================================================================ header */
+  /* The top stays white. The wave layers are pulled up into a slim ribbon   */
+  /* along the very top edge, so there is colour without a heavy dark band.  */
+  .head-wrap{ position:relative; height:50mm; background:#fff; }
+  .head-ribbon{
+    position:absolute; top:0; left:0;
+    width:100%; height:16mm;
+    display:block;
+  }
+  .head-rings{
+    position:absolute; top:19mm; right:-22mm;
+    width:66mm; height:66mm;
+    display:block;
+    opacity:.45;
+  }
+  .head{
+    position:relative;
+    padding:23mm 18mm 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+  }
+  .logo{ width:54mm; }
+  .logo img{ display:block; width:100%; }
+
+  .head-meta{
+    text-align:right;
+    font-size:7.5pt;
+    line-height:1.9;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-400);
+    padding-top:1mm;
+  }
+  .head-meta b{ color:var(--navy); font-weight:700; }
+
+  /* ========================================================= writing area */
+  /* Left empty on purpose. The mark behind it is faint enough to write on. */
+  .watermark{
+    position:absolute;
+    left:50%; top:152mm;
+    transform:translate(-50%, -50%);
+    width:130mm;
+    opacity:.06;
+    z-index:0;
+    pointer-events:none;
+  }
+  .watermark img{ display:block; width:100%; }
+
+  /* ================================================================ footer */
+  .foot-wrap{
+    position:absolute; left:0; right:0; bottom:0;
+    z-index:2;
+  }
+  .foot-wave{ display:block; width:100%; height:19mm; }
+  .foot{
+    background:var(--navy-900);
+    color:rgba(255,255,255,.62);
+    padding:2mm 18mm 8mm;
+    font-size:7.5pt;
+    line-height:1.6;
+    position:relative;
+  }
+  .foot-name{
+    color:#fff;
+    font-size:9pt;
+    font-weight:700;
+    letter-spacing:.04em;
+    padding-bottom:3mm;
+    margin-bottom:3.5mm;
+    border-bottom:.3mm solid rgba(255,255,255,.18);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .foot-name em{
+    font-style:normal;
+    font-size:7.5pt;
+    font-weight:400;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--green-400);
+  }
+  .foot-grid{
+    display:grid;
+    grid-template-columns:1.35fr 1fr 1fr;
+    gap:7mm;
+  }
+  .foot-grid .lbl{
+    font-size:6.2pt;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:#4ea36c;
+    font-weight:700;
+    margin-bottom:1.5mm;
+  }
+  .foot-grid .val{ color:rgba(255,255,255,.85); }
+  .foot-grid .val b{ color:#fff; font-weight:600; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <!-- ------------------------------------------------------------ header -->
+  <div class="head-wrap">
+    <svg class="head-ribbon" viewBox="0 0 1000 80" preserveAspectRatio="none">
+      <path fill="#1e7f3f" fill-opacity=".26"
+            d="M0,0 H1000 V54 C840,88 660,32 470,62 C300,88 130,82 0,54 Z"/>
+      <path fill="#1e7f3f"
+            d="M0,0 H1000 V40 C840,74 660,18 470,48 C300,74 130,68 0,40 Z"/>
+      <path fill="#0a1730"
+            d="M0,0 H1000 V26 C840,60 660,6 470,34 C300,60 130,54 0,26 Z"/>
+    </svg>
+
+    <svg class="head-rings" viewBox="0 0 200 200" fill="none">
+      <g stroke="#142a52" stroke-opacity=".13" stroke-width="1.6">
+        <circle cx="100" cy="100" r="42"/>
+        <circle cx="100" cy="100" r="66"/>
+        <circle cx="100" cy="100" r="90"/>
+      </g>
+      <circle cx="100" cy="100" r="6" fill="#1e7f3f" fill-opacity=".3"/>
+    </svg>
+
+    <div class="head">
+      <div class="logo"><img src="__LOGO_COLOR__" alt="Avri Energy"></div>
+      <div class="head-meta">
+        <b>Avri Energy Private Limited</b><br>
+        Electrical EPC &amp; Renewable Energy<br>
+      </div>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------------- watermark -->
+  <div class="watermark"><img src="__LOGO_COLOR__" alt=""></div>
+
+  <!-- ------------------------------------------------------------ footer -->
+  <div class="foot-wrap">
+    <svg class="foot-wave" viewBox="0 0 1000 260" preserveAspectRatio="none">
+      <g transform="translate(0,260) scale(1,-1)">
+        <path fill="#1e7f3f" fill-opacity=".22"
+              d="M0,0 H1000 V214 C860,258 700,176 470,214 C300,242 130,236 0,206 Z"/>
+        <path fill="#1e7f3f"
+              d="M0,0 H1000 V196 C860,240 700,158 470,196 C300,224 130,218 0,188 Z"/>
+        <path fill="#0a1730"
+              d="M0,0 H1000 V176 C860,220 700,138 470,176 C300,204 130,198 0,168 Z"/>
+      </g>
+    </svg>
+
+    <div class="foot">
+      <div class="foot-name">
+        AVRI ENERGY PRIVATE LIMITED
+        <em>Reliable Power. Trusted Partner.</em>
+      </div>
+      <div class="foot-grid">
+        <div>
+          <div class="lbl">Registered Office</div>
+          <div class="val">Office No. 3, Aurangabad Gadana, Modinagar,<br>Ghaziabad, Uttar Pradesh — 201204</div>
+        </div>
+        <div>
+          <div class="lbl">Contact</div>
+          <div class="val"><b>+91 89790 94813</b><br>+91 96431 75087<br>Landline · +91 1232 316164</div>
+        </div>
+        <div>
+          <div class="lbl">Online</div>
+          <div class="val"><b>www.avrienergy.com</b><br>info@avrienergy.com<br>sales@avrienergy.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
