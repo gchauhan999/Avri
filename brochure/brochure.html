@@ -12,8 +12,6 @@
     --navy-900:#0a1730;
     --green:#1e7f3f;
     --green-400:#3f9d63;
-    /* Lifted green, for green ink sitting on the navy cover. */
-    --green-300:#5cc184;
     --red:#e2101f;
     --ink-900:#0d0e11;
     --ink-700:#2c2e35;
@@ -47,22 +45,7 @@
   }
   .page:last-child{ page-break-after:auto; }
 
-  /* Content sits above the page watermark. */
   .pad{ padding:13mm 15mm; display:flex; flex-direction:column; height:100%; position:relative; z-index:1; }
-
-  /* ---------------------------------------------------------- watermark */
-  /* Brand mark, ghosted into the top-right whitespace of every content
-     page. Parked there rather than page-centre because the content pages
-     are wall-to-wall opaque cards — a centred mark would be sliced up by
-     them. The top-right corner is clear on every page in the set. */
-  .wm{
-    position:absolute;
-    top:12mm; right:15mm;
-    width:40mm;
-    opacity:.11;
-    z-index:0;
-  }
-  .wm img{ display:block; width:100%; }
 
   /* ---------------------------------------------------------------- logo */
   /* Transparent, white-ink mark — sits straight on the dark page, no card. */
@@ -108,50 +91,35 @@
   }
 
   /* ========================================================== COVER PAGE */
-  /* Dark cover: full-bleed navy, white-ink logo, oversized ghosted brand
-     mark bleeding off the right edge. The back cover stays light, so the
-     document opens dark and closes clean. */
-  .cover{ background:var(--navy-900); color:#fff; }
-  .cover .pad{ z-index:3; padding-bottom:34mm; }
+  /* Light cover, matched to the back cover: white page, brand mark in full
+     colour, square photograph on the right, navy closing band. */
+  .cover{ background:#fff; color:var(--ink-700); }
+  /* Right padding clears the photograph, so the text column never runs under it. */
+  .cover .pad{ z-index:3; padding-right:124mm; padding-bottom:34mm; }
 
-  /* The logo art is navy ink on transparency, so it would vanish against
-     the navy page — knock it to flat white instead of shipping a second file. */
-  .cover .logo img,
-  .cover-wm img{ filter:brightness(0) invert(1); }
-
-  /* Oversized watermark, cropped by the right edge of the page. The box also
-     crops the lockup vertically to the AVRI ENERGY row — at this scale the
-     strap-line underneath would rake straight through the body copy. */
-  .cover-wm{
-    position:absolute;
-    top:47%; right:-58mm;
-    transform:translateY(-50%);
-    width:250mm;
-    height:44mm;
+  /* --- photograph ------------------------------------------------------ */
+  /* Square, sitting in the right-hand margin and optically centred in the
+     area above the closing band rather than on the page. */
+  .cover-photo{
+    position:absolute; z-index:2;
+    top:46.5mm; right:15mm;
+    width:95mm; height:95mm;
     overflow:hidden;
-    opacity:.06;
-    z-index:1;
+    border-radius:4mm;
   }
-  .cover-wm img{ display:block; width:100%; margin-top:-9mm; }
-
-  /* Depth behind the headline, and a wash off the bottom-right corner. */
-  .cover-glow{
-    position:absolute; z-index:0;
-    left:-70mm; top:-30mm; width:200mm; height:200mm;
-    background:radial-gradient(circle, rgba(30,127,63,.20) 0%, rgba(30,127,63,0) 68%);
-  }
-  .cover-wash{
-    position:absolute; z-index:0;
-    right:0; bottom:0; width:150mm; height:150mm;
-    background:radial-gradient(circle at bottom right, rgba(20,42,82,.9) 0%, rgba(10,23,48,0) 72%);
+  .cover-photo img{
+    display:block; width:100%; height:100%;
+    object-fit:cover;
+    /* Framed right of centre: keeps the transformer and bushings in shot and
+       crops out the equipment badge on the left-hand cabinet. */
+    object-position:60% 50%;
   }
 
   .cover-top{ display:flex; justify-content:space-between; align-items:flex-start; }
-  .cover-meta{ text-align:right; font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); line-height:2; }
-  .cover-meta b{ color:#fff; font-weight:700; }
+  .cover-meta{ text-align:right; font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-400); line-height:2; }
+  .cover-meta b{ color:var(--navy); font-weight:700; }
 
-  /* Rotated spine label down the left edge — an editorial marker that also
-     fills the tall empty gutter the dark page opens up. */
+  /* Rotated spine label down the left edge. */
   .cover-spine{
     position:absolute;
     left:6.5mm; top:50%;
@@ -160,28 +128,24 @@
     font-size:7pt;
     letter-spacing:.34em;
     text-transform:uppercase;
-    color:rgba(255,255,255,.34);
+    color:var(--ink-400);
     z-index:3;
   }
 
   .cover-mid{ margin-top:auto; margin-bottom:11mm; }
-  .cover .eyebrow{ color:var(--green-300); }
-  .cover .rule{ background:var(--green-300); }
   .cover h1{
-    color:#fff;
-    font-size:43pt;
-    line-height:1.04;
+    color:var(--navy);
+    font-size:34pt;
+    line-height:1.06;
     letter-spacing:-.022em;
-    max-width:205mm;
     margin-top:4mm;
   }
-  .cover h1 span{ color:var(--green-300); }
+  .cover h1 span{ color:var(--green); }
   .cover-lead{
-    margin-top:6.5mm;
-    font-size:10.5pt;
-    line-height:1.6;
-    color:rgba(255,255,255,.66);
-    max-width:148mm;
+    margin-top:6mm;
+    font-size:10pt;
+    line-height:1.58;
+    color:var(--ink-500);
   }
   .cover-tag{
     display:inline-block;
@@ -199,19 +163,16 @@
   .cover-stats{
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:7mm;
+    gap:4.5mm;
   }
   /* Direct children only — a descendant selector would rule .v and .l too. */
   .cover-stats > div{
-    border-top:.5mm solid rgba(255,255,255,.22);
-    padding-top:5mm;
+    border-top:.5mm solid var(--navy);
+    padding-top:4mm;
   }
-  .cover-stats .v{ font-size:23pt; font-weight:700; color:#fff; line-height:1; }
-  .cover-stats .v i{ font-style:normal; color:var(--green-300); }
-  .cover-stats .l{ font-size:7.5pt; color:rgba(255,255,255,.5); margin-top:2.5mm; letter-spacing:.06em; text-transform:uppercase; }
-
-  /* The shared closing band is navy-on-navy here — make it a hairline. */
-  .cover .back-band{ background:transparent; border-top:.35mm solid rgba(255,255,255,.16); }
+  .cover-stats .v{ font-size:17pt; font-weight:700; color:var(--navy); line-height:1; }
+  .cover-stats .v i{ font-style:normal; color:var(--green); }
+  .cover-stats .l{ font-size:6.6pt; color:var(--ink-500); margin-top:2mm; letter-spacing:.05em; text-transform:uppercase; line-height:1.35; }
 
   /* ============================================================ ABOUT */
   .two{ display:grid; grid-template-columns:1.15fr .85fr; gap:11mm; flex:1; }
@@ -439,9 +400,9 @@
 
 <!-- ============================================================ 1. COVER -->
 <section class="page cover">
-  <div class="cover-glow"></div>
-  <div class="cover-wash"></div>
-  <div class="cover-wm"><img src="__LOGO_COLOR__" alt=""></div>
+  <div class="cover-photo">
+    <img src="__COVER_PHOTO__" alt="33/11 kV substation — transformer bay and switchyard">
+  </div>
   <div class="cover-spine">Company Profile</div>
 
   <div class="pad">
@@ -488,7 +449,6 @@
 
 <!-- ============================================================ 2. ABOUT -->
 <section class="page">
-  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
   <div class="pad">
     <div class="page-head">
       <div class="rule"></div>
@@ -589,7 +549,6 @@
 
 <!-- ========================================================= 3. SERVICES -->
 <section class="page">
-  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
   <div class="pad">
     <div class="page-head">
       <div class="rule"></div>
@@ -634,7 +593,6 @@
 
 <!-- ========================================================= 4. PRODUCTS -->
 <section class="page">
-  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
   <div class="pad">
     <div class="page-head">
       <div class="rule"></div>
@@ -725,7 +683,6 @@
 
 <!-- ======================================================= 5. INDUSTRIES -->
 <section class="page">
-  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
   <div class="pad">
     <div class="page-head">
       <div class="rule"></div>
@@ -769,7 +726,6 @@
 
 <!-- ========================================================= 6. PROJECTS -->
 <section class="page">
-  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
   <div class="pad">
     <div class="page-head">
       <div class="rule"></div>
@@ -892,7 +848,6 @@
 
 <!-- ================================================ 7. PROCESS + WHY US -->
 <section class="page">
-  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
   <div class="pad">
     <div class="page-head">
       <div class="rule"></div>
@@ -931,7 +886,6 @@
 
 <!-- ============================================== 8. CREDENTIALS + VOICE -->
 <section class="page">
-  <div class="wm"><img src="__LOGO_COLOR__" alt=""></div>
   <div class="pad">
     <div class="page-head">
       <div class="rule"></div>
