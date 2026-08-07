@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { apiBrowser } from "../lib/api";
+import { apiBrowser } from "../lib/api-browser";
 import { Button } from "./ui";
 
 export interface UploadedImage {

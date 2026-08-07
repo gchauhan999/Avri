@@ -87,30 +87,10 @@ export async function apiServerJson<T>(
   });
 }
 
-/* -------------------------------------------------------------------------- */
-/*  Browser side — client components                                           */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Browser request. Relative URL so it passes through the rewrite, and
- * `credentials: "include"` so the cookie rides along.
+/*
+ * Browser-side calls live in `lib/api-browser.ts`, not here.
  *
- * Used for file uploads, which go straight from the browser to the API rather
- * than through a server action — that avoids routing binaries through the Next
- * server and sidesteps the server-action body size limit entirely.
+ * This module imports `next/headers`, which is server-only. A client component
+ * importing anything from this file drags `next/headers` into the browser
+ * bundle and the build fails outright.
  */
-export async function apiBrowser<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(`/admin${path}`, {
-    ...init,
-    credentials: "include",
-    headers: {
-      Accept: "application/json",
-      "X-Admin-Request": "1",
-      ...init.headers,
-    },
-  });
-
-  if (!res.ok) throw await toError(res);
-  if (res.status === 204) return undefined as T;
-  return (await res.json()) as T;
-}
