@@ -48,7 +48,7 @@
   .pad{ padding:13mm 15mm; display:flex; flex-direction:column; height:100%; position:relative; z-index:1; }
 
   /* ---------------------------------------------------------------- logo */
-  /* Transparent, white-ink mark — sits straight on the dark page, no card. */
+  /* Transparent, full-colour mark — sits straight on the white page, no card. */
   .logo{ width:68mm; }
   .logo img{ display:block; width:100%; }
 
@@ -94,16 +94,17 @@
   /* Light cover, matched to the back cover: white page, brand mark in full
      colour, square photograph on the right, navy closing band. */
   .cover{ background:#fff; color:var(--ink-700); }
-  /* Right padding clears the photograph, so the text column never runs under it. */
-  .cover .pad{ z-index:3; padding-right:124mm; padding-bottom:34mm; }
+  .cover .pad{ z-index:3; padding-bottom:34mm; }
 
   /* --- photograph ------------------------------------------------------ */
-  /* Square, sitting in the right-hand margin and optically centred in the
-     area above the closing band rather than on the page. */
+  /* Square, riding alongside the headline block rather than the whole page —
+     it is a flex child of .cover-mid, so it centres itself against the copy
+     however that copy reflows. The stats strip below clears both and runs the
+     full width of the page. */
   .cover-photo{
-    position:absolute; z-index:2;
-    top:46.5mm; right:15mm;
-    width:95mm; height:95mm;
+    flex:none;
+    position:relative;
+    width:100mm; height:100mm;
     overflow:hidden;
     border-radius:4mm;
   }
@@ -132,7 +133,17 @@
     z-index:3;
   }
 
-  .cover-mid{ margin-top:auto; margin-bottom:11mm; }
+  /* Small fixed gap under the logo row; the slack that used to pool there is
+     taken up by the taller photograph, and what remains falls to the stats. */
+  .cover-mid{
+    margin-top:6mm;
+    margin-bottom:11mm;
+    display:flex;
+    align-items:center;
+    gap:16mm;
+  }
+  .cover-copy{ flex:1; min-width:0; }
+  .cover-stats{ margin-top:auto; }
   .cover h1{
     color:var(--navy);
     font-size:34pt;
@@ -400,9 +411,6 @@
 
 <!-- ============================================================ 1. COVER -->
 <section class="page cover">
-  <div class="cover-photo">
-    <img src="__COVER_PHOTO__" alt="33/11 kV substation — transformer bay and switchyard">
-  </div>
   <div class="cover-spine">Company Profile</div>
 
   <div class="pad">
@@ -410,20 +418,25 @@
       <div class="logo"><img src="__LOGO_COLOR__" alt="Avri Energy"></div>
       <div class="cover-meta">
         Electrical EPC &amp; Renewable Energy<br>
-        Ghaziabad, U.P.<br>
-        <b>Established 2015</b>
+        Ghaziabad, U.P.
       </div>
     </div>
 
     <div class="cover-mid">
-      <div class="rule"></div>
-      <div class="eyebrow">Avri Energy Private Limited</div>
-      <h1>Powering industry,<br>utilities and <span>infrastructure</span><br>across India.</h1>
-      <p class="cover-lead">
-        Turnkey HT &amp; LT works, substations, transformers, smart metering, solar and
-        EV charging infrastructure — engineered, built and maintained by one accountable team.
-      </p>
-      <div class="cover-tag">Reliable Power. Trusted Partner.</div>
+      <div class="cover-copy">
+        <div class="rule"></div>
+        <div class="eyebrow">Avri Energy Private Limited</div>
+        <h1>Powering industry,<br>utilities and <span>infrastructure</span><br>across India.</h1>
+        <p class="cover-lead">
+          Turnkey HT &amp; LT works, substations, transformers, smart metering, solar and
+          EV charging infrastructure — engineered, built and maintained by one accountable team.
+        </p>
+        <div class="cover-tag">Reliable Power. Trusted Partner.</div>
+      </div>
+
+      <div class="cover-photo">
+        <img src="__COVER_PHOTO__" alt="33/11 kV substation — transformer bay and switchyard">
+      </div>
     </div>
 
     <div class="cover-stats">
