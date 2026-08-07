@@ -19,8 +19,16 @@ const clauses: LegalClause[] = [
     ],
     bullets: [
       "Details you submit through our enquiry and quote forms — name, phone number, email address, organisation, site location and the description of your requirement.",
+      "If you apply for a job: your name, contact details, current location, employer, experience, notice period, any links you provide, and the CV you upload.",
       "Correspondence you send us by email, phone or WhatsApp.",
       "Basic technical information your browser sends automatically, such as device type and approximate location, used only to keep the site working and secure.",
+    ],
+  },
+  {
+    heading: "Job applications",
+    paragraphs: [
+      "Your CV and application details are used to assess you for the role you applied for, and for other openings we think may suit you. They are seen by our HR team and the manager hiring for that role — nobody else. We do not pass CVs to recruitment agencies or any other third party.",
+      "Applications are stored on our own server, not with a third-party service. If you are not successful we keep your details for up to twelve months in case something more suitable comes up, and then delete them along with your CV. You can ask us to delete them sooner at any time, and we will.",
     ],
   },
   {
@@ -28,6 +36,7 @@ const clauses: LegalClause[] = [
     bullets: [
       "To respond to your enquiry and prepare a quotation or proposal.",
       "To carry out a site survey and deliver any services you engage us for.",
+      "To assess a job application and contact you about it.",
       "To maintain project records, invoices and statutory documentation.",
       "To contact you about an ongoing project or a service you have received.",
     ],
@@ -55,14 +64,17 @@ const clauses: LegalClause[] = [
   },
   {
     heading: "Data retention",
-    paragraphs: [
-      "Enquiry records are kept for as long as the opportunity is live and for a reasonable period afterwards. Project, invoicing and statutory records are retained for the period required under applicable Indian tax and company law.",
+    bullets: [
+      "Enquiries: kept while the opportunity is live and for a reasonable period afterwards.",
+      "Job applications: up to twelve months from the date you applied, unless you ask us to remove them sooner or you join us.",
+      "Project, invoicing and statutory records: for the period required under applicable Indian tax and company law.",
     ],
   },
   {
     heading: "Security",
     paragraphs: [
-      "We apply reasonable technical and organisational measures to protect the information we hold. No transmission over the internet can be guaranteed completely secure, so please do not send sensitive financial or identity documents through the website forms — email or hand them over directly instead.",
+      "We apply reasonable technical and organisational measures to protect the information we hold. Uploaded CVs are stored outside the public website and can only be opened by a signed-in member of our HR team; they are never linked publicly or indexed by search engines.",
+      "No transmission over the internet can be guaranteed completely secure. Please do not send financial or identity documents — bank details, PAN, Aadhaar — through the website forms. Send those by email or hand them over directly, and only when we have asked for them.",
     ],
   },
   {
@@ -76,7 +88,7 @@ const clauses: LegalClause[] = [
     bullets: [
       "Ask what personal information we hold about you.",
       "Ask us to correct information that is inaccurate.",
-      "Ask us to delete information we no longer need to retain.",
+      "Ask us to delete information we no longer need to retain — including your CV and application.",
       "Withdraw consent to further contact at any time.",
     ],
     paragraphs: [
