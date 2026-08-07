@@ -1,9 +1,14 @@
 import type { MetadataRoute } from "next";
 import { products } from "@/lib/products";
-import { company, legalNav, navHrefs } from "@/lib/site";
+import { canonicalUrl } from "@/lib/seo";
+import { legalNav, navHrefs } from "@/lib/site";
 
-/** Written once at build time — the static export has no server to run it. */
-export const dynamic = "force-static";
+/**
+ * Regenerated hourly rather than pinned at build time: job openings and blog
+ * posts come from the database, so the sitemap has to be able to change
+ * without a redeploy.
+ */
+export const revalidate = 3600;
 
 /** All public routes, generated from the navigation config and the catalogue. */
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -12,9 +17,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const primary = [...navHrefs, "/request-a-quote"];
   const legal = legalNav.map((n) => n.href);
 
+  // Every URL goes through `canonicalUrl` so the sitemap advertises exactly the
+  // address each page names as its canonical — trailing slash included.
   return [
     ...primary.map((href) => ({
-      url: `${company.siteUrl}${href === "/" ? "" : href}`,
+      url: canonicalUrl(href),
       lastModified: now,
       changeFrequency: (href === "/" ? "weekly" : "monthly") as
         | "weekly"
@@ -22,13 +29,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: href === "/" ? 1 : 0.8,
     })),
     ...products.map((product) => ({
-      url: `${company.siteUrl}/products/${product.slug}`,
+      url: canonicalUrl(`/products/${product.slug}`),
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...legal.map((href) => ({
-      url: `${company.siteUrl}${href}`,
+      url: canonicalUrl(href),
       lastModified: now,
       changeFrequency: "yearly" as const,
       priority: 0.3,
