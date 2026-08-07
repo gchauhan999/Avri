@@ -1,26 +1,111 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* --- Brand palette ------------------------------------------------------ */
+  /* Primary: green */
+  --color-brand-50: #eaf5ee;
+  --color-brand-100: #cbe7d5;
+  --color-brand-200: #9bcfae;
+  --color-brand-300: #6ab787;
+  --color-brand-400: #3f9d63;
+  --color-brand-500: #1e7f3f;
+  --color-brand-600: #1a6f37;
+  --color-brand-700: #155a2d;
+  --color-brand-800: #104522;
+  --color-brand-900: #0a2e17;
+
+  /* Accent: orange */
+  --color-accent-50: #fff4e6;
+  --color-accent-100: #ffe2bf;
+  --color-accent-200: #ffc98a;
+  --color-accent-300: #ffae54;
+  --color-accent-400: #fa951f;
+  --color-accent-500: #f57c00;
+  --color-accent-600: #d96b00;
+  --color-accent-700: #b25700;
+  --color-accent-800: #8a4300;
+  --color-accent-900: #5c2c00;
+
+  /* Neutrals — near-black typography on white */
+  --color-ink-50: #f7f7f8;
+  --color-ink-100: #ededf0;
+  --color-ink-200: #d9dae0;
+  --color-ink-300: #b9bbc2;
+  --color-ink-400: #8a8d97;
+  --color-ink-500: #5f636e;
+  --color-ink-600: #43464f;
+  --color-ink-700: #2c2e35;
+  --color-ink-800: #1a1c21;
+  --color-ink-900: #0d0e11;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-4xl: 2rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+html {
+  scroll-behavior: smooth;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Set here, not on `body`: when `html` leaves overflow at `visible` the
+     browser propagates `body`'s value up to the viewport instead of clipping
+     inside body, so the sideways scroll survives. See the note on `body`. */
+  overflow-x: clip;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #ffffff;
+  color: var(--color-ink-900);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  /* The scroll-in animations start elements 28px to one side (see
+     `lib/motion.ts`). On a phone those elements are full-width, so while they
+     wait to animate they stick out past the right edge and the whole page
+     would scroll sideways. `clip` removes that scroll without the side effects
+     `overflow: hidden` has — it does not trap `position: sticky` children,
+     which the navbar relies on. */
+  overflow-x: clip;
+}
+
+/* Consistent keyboard focus ring across the site */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Glassmorphism surface used on the navbar and floating cards */
+.glass {
+  background-color: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+
+.glass-dark {
+  background-color: rgb(13 14 17 / 0.55);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+
+/* Thin scrollbar for horizontal filter rails */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
