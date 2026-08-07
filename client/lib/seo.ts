@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { company, contact, socials } from "./site";
 import { EMPLOYMENT_SCHEMA } from "./careers";
-import type { Job } from "./types";
+import type { Job, Post } from "./types";
 
 /**
  * Absolute URL for a route path.
@@ -149,6 +149,44 @@ export function jobPostingJsonLd(job: Job) {
       : {}),
     ...(job.openings > 1 ? { totalJobOpenings: job.openings } : {}),
     directApply: true,
+  };
+}
+
+/**
+ * BlogPosting schema for an article.
+ *
+ * `headline` is capped at 110 characters because Google truncates past that
+ * and flags longer values in the Rich Results Test.
+ */
+export function articleJsonLd(post: Post) {
+  const url = canonicalUrl(`/blog/${post.slug}`);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    headline: post.title.slice(0, 110),
+    description: post.seoDescription ?? post.excerpt ?? undefined,
+    url,
+    datePublished: post.publishedAt ?? undefined,
+    dateModified: post.updatedAt ?? post.publishedAt ?? undefined,
+    author: {
+      "@type": post.authorName ? "Person" : "Organization",
+      name: post.authorName ?? company.name,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: company.name,
+      logo: {
+        "@type": "ImageObject",
+        url: `${company.siteUrl}/assets/logo.png`,
+      },
+    },
+    articleSection: post.categoryName,
+    ...(post.readingMinutes ? { timeRequired: `PT${post.readingMinutes}M` } : {}),
+    ...(post.seoKeywords ? { keywords: post.seoKeywords } : {}),
+    // Already absolute — the API returns a full URL for uploaded covers.
+    ...(post.cover ? { image: [post.cover] } : {}),
   };
 }
 

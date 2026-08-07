@@ -179,6 +179,49 @@ export interface Job extends JobSummary {
   seoDescription: string | null;
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Blog / News — database-backed, written in the admin panel                  */
+/* -------------------------------------------------------------------------- */
+
+export interface PostCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  /** Published posts only, so the filter never offers an empty category. */
+  postCount: number;
+}
+
+/** Card shape, as returned by `GET /api/posts`. */
+export interface PostSummary {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  cover: string | null;
+  coverAlt: string | null;
+  coverImageWidth: number | null;
+  coverImageHeight: number | null;
+  publishedAt: string | null;
+  readingMinutes: number | null;
+  isFeatured: boolean;
+  authorName: string | null;
+  categoryName: string;
+  categorySlug: string;
+}
+
+/** Full article, as returned by `GET /api/posts/:slug`. */
+export interface Post extends PostSummary {
+  /** Sanitised server-side on write — see `server/src/services/sanitise.ts`. */
+  body: string;
+  updatedAt: string;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  seoKeywords: string | null;
+  canonicalUrl: string | null;
+  related: PostSummary[];
+}
+
 export interface Certification {
   code: string;
   title: string;
