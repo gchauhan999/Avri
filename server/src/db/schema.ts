@@ -34,10 +34,18 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-/** Every table gets these two, and nothing sets them by hand. */
+/**
+ * Every table gets these two, and nothing sets them by hand.
+ *
+ * `mode: "string"` throughout this file, matching `dateStrings: true` on the
+ * pool. The two have to agree — otherwise the driver hands back a string while
+ * Drizzle's types promise a Date, and the mismatch only shows up at runtime.
+ * Strings also avoid a whole class of timezone bug: the app formats dates for
+ * display in Asia/Kolkata explicitly rather than inheriting the server's zone.
+ */
 const stamps = {
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow().onUpdateNow(),
 };
 
 const id = () => bigint("id", { mode: "number", unsigned: true }).autoincrement().primaryKey();
@@ -63,10 +71,10 @@ export const adminUsers = mysqlTable(
      * without a session table.
      */
     tokenVersion: int("token_version", { unsigned: true }).notNull().default(0),
-    lastLoginAt: datetime("last_login_at"),
+    lastLoginAt: datetime("last_login_at", { mode: "string" }),
     /** Lockout survives an IP change, which per-IP rate limiting does not. */
     failedAttempts: smallint("failed_attempts", { unsigned: true }).notNull().default(0),
-    lockedUntil: datetime("locked_until"),
+    lockedUntil: datetime("locked_until", { mode: "string" }),
     ...stamps,
   },
   (t) => [uniqueIndex("uq_admin_users_email").on(t.email)]
@@ -107,12 +115,12 @@ export const jobs = mysqlTable(
     responsibilities: json("responsibilities").$type<string[]>(),
     requirements: json("requirements").$type<string[]>(),
     status: mysqlEnum("status", ["draft", "open", "closed"]).notNull().default("draft"),
-    publishedAt: datetime("published_at"),
+    publishedAt: datetime("published_at", { mode: "string" }),
     /**
      * Google demotes sites that keep expired JobPosting markup live, so this
      * feeds `validThrough` and the public route 404s once it passes.
      */
-    closesAt: date("closes_at"),
+    closesAt: date("closes_at", { mode: "string" }),
     seoTitle: varchar("seo_title", { length: 200 }),
     seoDescription: varchar("seo_description", { length: 320 }),
     createdBy: bigint("created_by", { mode: "number", unsigned: true }).references(
@@ -238,7 +246,7 @@ export const posts = mysqlTable(
     coverImageWidth: smallint("cover_image_width", { unsigned: true }),
     coverImageHeight: smallint("cover_image_height", { unsigned: true }),
     status: mysqlEnum("status", ["draft", "published", "archived"]).notNull().default("draft"),
-    publishedAt: datetime("published_at"),
+    publishedAt: datetime("published_at", { mode: "string" }),
     readingMinutes: tinyint("reading_minutes", { unsigned: true }),
     isFeatured: boolean("is_featured").notNull().default(false),
     seoTitle: varchar("seo_title", { length: 200 }),
@@ -287,7 +295,7 @@ export const clients = mysqlTable(
     isAuthorized: boolean("is_authorized").notNull().default(false),
     /** e.g. "logo use approved by email from R. Kumar, 2026-03-04". */
     authorizationNote: varchar("authorization_note", { length: 400 }),
-    authorizedAt: datetime("authorized_at"),
+    authorizedAt: datetime("authorized_at", { mode: "string" }),
     authorizedBy: bigint("authorized_by", { mode: "number", unsigned: true }).references(
       () => adminUsers.id,
       { onDelete: "set null" }

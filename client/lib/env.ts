@@ -32,6 +32,11 @@ export const env = {
     "Office No. 3, Aurangabad Gadana, Modinagar, Ghaziabad, Uttar Pradesh – 201204"
   ),
   googleMap: opt(process.env.NEXT_PUBLIC_GOOGLE_MAP),
+  /**
+   * Not reliably derivable from `NEXT_PUBLIC_ADDRESS` by splitting on commas,
+   * and Google's JobPosting schema wants a real PostalAddress.
+   */
+  postalCode: val(process.env.NEXT_PUBLIC_POSTAL_CODE, "201204"),
 
   /* --- Social media ------------------------------------------------------ */
   facebook: opt(process.env.NEXT_PUBLIC_FACEBOOK),

@@ -5,8 +5,8 @@
  * exactly what changed when something is published in the admin panel.
  */
 
-import { apiGet } from "./api";
-import type { Client } from "./types";
+import { apiFind, apiGet } from "./api";
+import type { Client, Job, JobSummary } from "./types";
 
 /**
  * Authorised, published clients only.
@@ -22,4 +22,36 @@ export async function getClients(): Promise<Client[]> {
     tags: ["clients"],
   });
   return clients.filter((client) => client.name);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Careers                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/** Open roles only — the API will not return drafts or closed ones. */
+export async function getJobs(): Promise<JobSummary[]> {
+  return apiGet<JobSummary[]>("/api/jobs", [], { revalidate: 300, tags: ["jobs"] });
+}
+
+/**
+ * One role, or null when it genuinely does not exist.
+ *
+ * `apiFind` rather than `apiGet`: a detail page must not render "not found"
+ * because of a transient 502, because ISR would cache that 404 and the page
+ * would stay missing long after the API recovered. Only a real 404 returns
+ * null; anything else throws to the error boundary.
+ */
+export async function getJob(slug: string): Promise<Job | null> {
+  return apiFind<Job>(`/api/jobs/${encodeURIComponent(slug)}`, {
+    revalidate: 300,
+    tags: ["jobs", `job:${slug}`],
+  });
+}
+
+/** Slugs and timestamps for the sitemap. */
+export async function getJobIndex(): Promise<{ slug: string; updatedAt: string }[]> {
+  return apiGet<{ slug: string; updatedAt: string }[]>("/api/jobs/index", [], {
+    revalidate: 3600,
+    tags: ["jobs"],
+  });
 }

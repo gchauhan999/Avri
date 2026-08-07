@@ -52,6 +52,7 @@ export const contact = {
     .split(",")
     .map((part) => part.trim())
     .filter(Boolean),
+  postalCode: env.postalCode,
   googleMap: env.googleMap,
   hours: [env.hoursWeekdays, env.hoursWeekend].filter(Boolean),
 } as const;
@@ -714,6 +715,69 @@ export const gallery: GalleryItem[] = [
   { id: "g10", caption: "DC fast charger commissioning", category: "Site Works", illustration: "ev" },
   { id: "g11", caption: "Site safety briefing", category: "Team", illustration: "team" },
   { id: "g12", caption: "Maintenance crew on shift", category: "Team", illustration: "maintenance" },
+];
+
+/* -------------------------------------------------------------------------- */
+/*  Careers                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Brand copy for the careers page. Stays here rather than in the database:
+ * job *openings* change weekly and are managed in the admin panel, but why
+ * someone should want to work here changes about as often as the mission
+ * statement does.
+ */
+export const careerValues: Feature[] = [
+  {
+    title: "Site work, not slide decks",
+    description:
+      "You will be at substations, rooftops and feeder pillars, commissioning equipment you specified. Engineers here own their work from drawing to charging.",
+  },
+  {
+    title: "Learn from people who have done it",
+    description:
+      "Every junior engineer works alongside someone who has commissioned dozens of installations. Nobody is handed a site and left to guess.",
+  },
+  {
+    title: "Work that is going somewhere",
+    description:
+      "Smart metering, solar and EV charging are where India's grid is heading. The experience you build here will still matter in ten years.",
+  },
+];
+
+export const careerBenefits: string[] = [
+  "Provident fund and ESI as applicable",
+  "Group accident cover for site staff",
+  "Full PPE and safety training before site deployment",
+  "Travel and site allowance",
+  "Certification support — electrical supervisor licence and safety courses",
+  "Annual review with a clear path to senior roles",
+];
+
+export const hiringSteps: ProcessStep[] = [
+  {
+    step: "01",
+    title: "You apply",
+    description: "Send your CV through the site. Everything lands with our HR team the same day.",
+  },
+  {
+    step: "02",
+    title: "First call",
+    description:
+      "A short conversation about your experience and what you want next. Usually within a week.",
+  },
+  {
+    step: "03",
+    title: "Technical discussion",
+    description:
+      "With the engineer you would work under. Practical questions about real situations, not puzzles.",
+  },
+  {
+    step: "04",
+    title: "Offer",
+    description:
+      "Written offer with the role, package and start date. If it is a no, we tell you — we do not leave people waiting.",
+  },
 ];
 
 /* -------------------------------------------------------------------------- */

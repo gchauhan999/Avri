@@ -141,6 +141,44 @@ export interface Client {
   sector?: string | null;
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Careers — database-backed, managed in the admin panel                      */
+/* -------------------------------------------------------------------------- */
+
+export type EmploymentType = "full_time" | "part_time" | "contract" | "internship";
+
+/** Summary shape, as returned by `GET /api/jobs`. */
+export interface JobSummary {
+  id: number;
+  slug: string;
+  title: string;
+  department: string | null;
+  location: string;
+  employmentType: EmploymentType;
+  experienceMin: number | null;
+  experienceMax: number | null;
+  openings: number;
+  salaryRange: string | null;
+  salaryMin: number | null;
+  salaryMax: number | null;
+  salaryPeriod: "month" | "year" | null;
+  /** One line, used on the card and as the meta description. */
+  summary: string;
+  publishedAt: string | null;
+  /** Past this date the role 404s and leaves the sitemap. */
+  closesAt: string | null;
+  updatedAt: string;
+}
+
+/** Full shape, as returned by `GET /api/jobs/:slug`. */
+export interface Job extends JobSummary {
+  description: string;
+  responsibilities: string[] | null;
+  requirements: string[] | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+}
+
 export interface Certification {
   code: string;
   title: string;

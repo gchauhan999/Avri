@@ -11,10 +11,14 @@ import { requireAdminHeader } from "../middleware/require-admin-header.js";
 import { adminWrite } from "../middleware/rate-limit.js";
 import { enquiriesRouter } from "./public/enquiries.routes.js";
 import { clientsRouter } from "./public/clients.routes.js";
+import { jobsRouter } from "./public/jobs.routes.js";
+import { applicationsRouter } from "./public/applications.routes.js";
 import { authRouter } from "./admin/auth.routes.js";
 import { statsRouter } from "./admin/stats.routes.js";
 import { adminEnquiriesRouter } from "./admin/enquiries.routes.js";
 import { adminClientsRouter } from "./admin/clients.routes.js";
+import { adminJobsRouter } from "./admin/jobs.routes.js";
+import { adminApplicationsRouter } from "./admin/applications.routes.js";
 
 export const routes = Router();
 
@@ -22,6 +26,8 @@ export const routes = Router();
 
 routes.use("/enquiries", enquiriesRouter);
 routes.use("/clients", clientsRouter);
+routes.use("/jobs", jobsRouter);
+routes.use("/applications", applicationsRouter);
 
 /* --- Admin -------------------------------------------------------------- */
 
@@ -35,5 +41,7 @@ admin.use("/auth", authRouter);
 admin.use("/stats", statsRouter);
 admin.use("/enquiries", adminEnquiriesRouter);
 admin.use("/clients", adminClientsRouter);
+admin.use("/jobs", adminJobsRouter);
+admin.use("/applications", adminApplicationsRouter);
 
 routes.use("/admin", admin);

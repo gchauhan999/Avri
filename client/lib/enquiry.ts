@@ -118,6 +118,137 @@ async function deliver(
   return { ok: false, state: { status: "error", message: "", values } };
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Job applications                                                           */
+/* -------------------------------------------------------------------------- */
+
+export const RESUME_ACCEPT = ".pdf,.doc,.docx";
+export const RESUME_MAX_MB = 5;
+
+/**
+ * Multipart delivery, for the CV upload.
+ *
+ * Deliberately sets no `Content-Type`. The browser has to generate
+ * `multipart/form-data; boundary=…` itself — setting it by hand is the classic
+ * way to make the server see zero fields and zero files.
+ */
+async function deliverMultipart(
+  path: string,
+  body: FormData,
+  values: Record<string, string>
+): Promise<{ ok: true; message?: string } | { ok: false; state: FormState }> {
+  let res: Response;
+  try {
+    res = await fetch(apiUrl(path), { method: "POST", headers: { Accept: "application/json" }, body });
+  } catch (error) {
+    console.error("[application] request failed", error);
+    return { ok: false, state: { status: "error", message: "", values } };
+  }
+
+  if (res.ok) {
+    const parsed = (await res.json().catch(() => ({}))) as { message?: string };
+    return { ok: true, ...(parsed.message ? { message: parsed.message } : {}) };
+  }
+
+  const parsed = (await res.json().catch(() => null)) as ApiErrorBody | null;
+
+  if (res.status === 422 && parsed?.error.fields) {
+    return {
+      ok: false,
+      state: { status: "error", message: parsed.error.message, errors: parsed.error.fields, values },
+    };
+  }
+
+  // 413 too large, 415 wrong type, 409 already applied, 429 too many, 503 disk
+  // full — all carry a message written for the applicant to read.
+  if ([409, 413, 415, 429, 503].includes(res.status) && parsed?.error.message) {
+    return {
+      ok: false,
+      state: {
+        status: "error",
+        message: parsed.error.message,
+        ...(res.status === 413 || res.status === 415
+          ? { errors: { resume: parsed.error.message } }
+          : {}),
+        values,
+      },
+    };
+  }
+
+  console.error("[application] endpoint responded", res.status, parsed);
+  return { ok: false, state: { status: "error", message: "", values } };
+}
+
+/**
+ * Apply for a job.
+ *
+ * Note the payload is rebuilt rather than the incoming FormData forwarded —
+ * that way the honeypot field never reaches the server, and nothing unexpected
+ * from the DOM rides along.
+ */
+export async function submitApplication(formData: FormData): Promise<FormState> {
+  if (isBot(formData)) {
+    return { status: "success", message: "Thank you. We will be in touch." };
+  }
+
+  const values = collect(formData, [
+    "name",
+    "email",
+    "phone",
+    "position",
+    "jobSlug",
+    "currentLocation",
+    "experience",
+    "currentCompany",
+    "noticePeriod",
+    "linkedin",
+    "message",
+  ]);
+
+  const resume = formData.get("resume");
+  const file = resume instanceof File && resume.size > 0 ? resume : null;
+
+  const errors: Record<string, string> = {};
+  if (values.name.length < 2) errors.name = "Please enter your name.";
+  if (!EMAIL_RE.test(values.email)) errors.email = "Enter a valid email address.";
+  if (!PHONE_RE.test(values.phone)) errors.phone = "Enter a valid 10-digit mobile number.";
+  if (!values.position) errors.position = "Tell us which role you are applying for.";
+
+  if (!file) {
+    errors.resume = "Please attach your CV.";
+  } else if (file.size > RESUME_MAX_MB * 1024 * 1024) {
+    errors.resume = `That file is over ${RESUME_MAX_MB} MB. Please attach a smaller one.`;
+  } else if (!RESUME_ACCEPT.split(",").some((ext) => file.name.toLowerCase().endsWith(ext))) {
+    errors.resume = "Attach a PDF, DOC or DOCX file.";
+  }
+
+  if (Object.keys(errors).length > 0) return invalid(errors, values);
+
+  const body = new FormData();
+  for (const [key, value] of Object.entries(values)) {
+    if (value) body.append(key, value);
+  }
+  body.append("resume", file!, file!.name);
+
+  const result = await deliverMultipart("/api/applications", body, values);
+
+  if (!result.ok) {
+    return {
+      ...result.state,
+      message:
+        result.state.message ||
+        "Something went wrong sending your application. Please email your CV to us instead.",
+    };
+  }
+
+  return {
+    status: "success",
+    message:
+      result.message ??
+      "Your application has reached us. If your profile fits the role, our HR team will call you within a week.",
+  };
+}
+
 /** General contact form. */
 export async function submitEnquiry(formData: FormData): Promise<FormState> {
   if (isBot(formData)) {
