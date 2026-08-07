@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getJobIndex } from "@/lib/content";
 import { products } from "@/lib/products";
 import { canonicalUrl } from "@/lib/seo";
 import { legalNav, navHrefs } from "@/lib/site";
@@ -11,10 +12,20 @@ import { legalNav, navHrefs } from "@/lib/site";
 export const revalidate = 3600;
 
 /** All public routes, generated from the navigation config and the catalogue. */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  const primary = [...navHrefs, "/request-a-quote"];
+  /**
+   * Open roles only — `getJobIndex` excludes drafts, closed roles and any
+   * whose closing date has passed. Those pages 404, and advertising a URL that
+   * 404s is worse than omitting it.
+   *
+   * Fail-soft: if the API is unreachable this returns an empty list rather
+   * than throwing, so an outage costs us the job URLs, not the whole sitemap.
+   */
+  const jobs = await getJobIndex();
+
+  const primary = [...navHrefs, "/request-a-quote", "/careers/apply"];
   const legal = legalNav.map((n) => n.href);
 
   // Every URL goes through `canonicalUrl` so the sitemap advertises exactly the
@@ -33,6 +44,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    ...jobs.map((job) => ({
+      url: canonicalUrl(`/careers/${job.slug}`),
+      lastModified: new Date(job.updatedAt.replace(" ", "T") + "Z"),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
     })),
     ...legal.map((href) => ({
       url: canonicalUrl(href),

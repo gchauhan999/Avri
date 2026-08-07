@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { FormState } from "@/lib/enquiry";
 
@@ -97,6 +97,7 @@ export function SelectField({
   options,
   required,
   className = "",
+  defaultValue,
 }: {
   label: string;
   name: string;
@@ -104,6 +105,12 @@ export function SelectField({
   options: string[];
   required?: boolean;
   className?: string;
+  /**
+   * Pre-selected value, used before the form has been submitted once. The
+   * apply form needs it to prefill the position from `?job=`; a value echoed
+   * back after a failed submit still wins.
+   */
+  defaultValue?: string;
 }) {
   const error = state.errors?.[name];
   return (
@@ -114,7 +121,7 @@ export function SelectField({
       <select
         id={name}
         name={name}
-        defaultValue={state.values?.[name] ?? ""}
+        defaultValue={state.values?.[name] ?? defaultValue ?? ""}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${name}-error` : undefined}
         className={`mt-2 ${control} ${border(error)}`}
@@ -170,6 +177,168 @@ export function TextareaField({
 }
 
 /** Hidden field that automated submissions tend to fill in. */
+/** Accepted CV formats, shared with `submitApplication` and the server. */
+export const RESUME_ACCEPT = ".pdf,.doc,.docx";
+export const RESUME_MAX_MB = 5;
+
+/**
+ * File input for the CV upload.
+ *
+ * Same contract as the fields above — uncontrolled, error from
+ * `state.errors[name]`, `aria-invalid` and `aria-describedby` — so it drops
+ * into a form the same way. The real `<input type="file">` stays in the DOM
+ * and stays uncontrolled, which is what lets `new FormData(form)` pick the
+ * file up with no extra wiring.
+ *
+ * One thing that cannot work like the others: `state.values` cannot restore a
+ * file after a failed submit, because browsers forbid writing `input.files`.
+ * It does not matter in practice — on error the form stays mounted (only
+ * success swaps in `FormSuccess`), so the input keeps its selection. Please
+ * don't "fix" this by making it controlled.
+ */
+export function FileField({
+  label,
+  name,
+  state,
+  required,
+  accept = RESUME_ACCEPT,
+  maxSizeMb = RESUME_MAX_MB,
+  hint = "PDF, DOC or DOCX · up to 5 MB",
+  className = "",
+}: {
+  label: string;
+  name: string;
+  state: FormState;
+  required?: boolean;
+  accept?: string;
+  maxSizeMb?: number;
+  hint?: string;
+  className?: string;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [local, setLocal] = useState("");
+  const [dragging, setDragging] = useState(false);
+
+  // A server-side error wins over anything we caught locally.
+  const error = state.errors?.[name] ?? (local || undefined);
+  const describedBy = error ? `${name}-error` : `${name}-hint`;
+
+  const extensions = accept.split(",").map((a) => a.trim().toLowerCase());
+
+  function problemWith(candidate: File): string {
+    const ext = `.${candidate.name.split(".").pop()?.toLowerCase() ?? ""}`;
+    // Checked on extension, not MIME type: Windows reports an empty `type` for
+    // some .doc files, so the MIME check would reject a perfectly good CV.
+    if (!extensions.includes(ext)) {
+      return `Attach a ${extensions.map((e) => e.replace(".", "").toUpperCase()).join(", ")} file.`;
+    }
+    if (candidate.size > maxSizeMb * 1024 * 1024) {
+      return `That file is over ${maxSizeMb} MB. Please attach a smaller one.`;
+    }
+    return "";
+  }
+
+  function take(next: File | null) {
+    if (!next) {
+      setFile(null);
+      setLocal("");
+      return;
+    }
+    const problem = problemWith(next);
+    setLocal(problem);
+    setFile(problem ? null : next);
+  }
+
+  function clear() {
+    // `input.files` is read-only; clearing the value is the only way.
+    if (inputRef.current) inputRef.current.value = "";
+    setFile(null);
+    setLocal("");
+  }
+
+  const sizeLabel = file
+    ? file.size < 1024 * 1024
+      ? `${Math.round(file.size / 1024)} KB`
+      : `${(file.size / 1024 / 1024).toFixed(1)} MB`
+    : "";
+
+  return (
+    <div className={className}>
+      <Label htmlFor={name} required={required}>
+        {label}
+      </Label>
+
+      <input
+        ref={inputRef}
+        id={name}
+        name={name}
+        type="file"
+        accept={accept}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy}
+        onChange={(event) => take(event.target.files?.[0] ?? null)}
+        className="sr-only"
+      />
+
+      {file ? (
+        <div className="mt-2 flex items-center justify-between gap-4 rounded-xl border border-ink-200 bg-white px-4 py-3">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-ink-900">{file.name}</p>
+            <p className="text-xs text-ink-400">{sizeLabel}</p>
+          </div>
+          <button
+            type="button"
+            onClick={clear}
+            className="shrink-0 text-sm font-semibold text-ink-500 transition-colors hover:text-red-600"
+          >
+            Remove
+          </button>
+        </div>
+      ) : (
+        <label
+          htmlFor={name}
+          onDragOver={(event) => {
+            event.preventDefault();
+            setDragging(true);
+          }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={(event) => {
+            event.preventDefault();
+            setDragging(false);
+            const dropped = event.dataTransfer.files?.[0];
+            if (!dropped) return;
+            // Assign through DataTransfer so the uncontrolled input really
+            // holds the file and FormData picks it up on submit.
+            if (inputRef.current) inputRef.current.files = event.dataTransfer.files;
+            take(dropped);
+          }}
+          className={`mt-2 flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed px-6 py-8 text-center transition-colors ${
+            dragging
+              ? "border-brand-500 bg-brand-50"
+              : error
+                ? "border-red-400 bg-white"
+                : "border-ink-200 bg-white hover:border-brand-500"
+          }`}
+        >
+          <span className="text-sm font-semibold text-ink-800">
+            Choose a file or drag it here
+          </span>
+          <span className="mt-1 text-xs text-ink-400">{hint}</span>
+        </label>
+      )}
+
+      {error ? (
+        <ErrorText id={`${name}-error`} error={error} />
+      ) : (
+        <p id={`${name}-hint`} className="mt-1.5 text-xs text-ink-400">
+          {hint}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function Honeypot() {
   return (
     <div className="hidden" aria-hidden="true">
