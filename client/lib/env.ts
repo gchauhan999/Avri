@@ -69,4 +69,29 @@ export const env = {
     process.env.NEXT_PUBLIC_SITE_URL,
     "https://www.avrienergy.com"
   ).replace(/\/$/, ""),
+
+  /* --- API ---------------------------------------------------------------- */
+
+  /**
+   * Origin of the Avri API, as the *browser* sees it. Forms POST here, so it
+   * is compiled into the bundle and is not a place for anything secret.
+   */
+  apiUrl: val(process.env.NEXT_PUBLIC_API_URL, "http://localhost:4000").replace(
+    /\/$/,
+    ""
+  ),
+
+  /**
+   * Origin of the API as the *Next server* sees it. Server Components use this
+   * so a page render goes over the loopback rather than back out through DNS
+   * and the public TLS hop. Not a `NEXT_PUBLIC_` value — it never reaches the
+   * browser, and in production it is usually 127.0.0.1.
+   */
+  apiInternalUrl: val(
+    process.env.API_INTERNAL_URL,
+    val(process.env.NEXT_PUBLIC_API_URL, "http://localhost:4000")
+  ).replace(/\/$/, ""),
+
+  /** Shared with the server's REVALIDATE_SECRET; guards `/api/revalidate`. */
+  revalidateSecret: opt(process.env.REVALIDATE_SECRET),
 } as const;

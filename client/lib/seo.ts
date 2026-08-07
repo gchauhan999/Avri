@@ -2,6 +2,21 @@ import type { Metadata } from "next";
 import { company, contact, socials } from "./site";
 
 /**
+ * Absolute URL for a route path.
+ *
+ * `trailingSlash: true` in `next.config.ts` means the server actually serves
+ * `/about/`, so a canonical of `/about` points at a URL that 308-redirects.
+ * Search engines follow it, but they are being told the wrong address; this
+ * keeps the two in step. Query strings keep their slash before the `?`.
+ */
+export function canonicalUrl(path: string): string {
+  if (path === "/") return `${company.siteUrl}/`;
+  const [route, query] = path.split("?");
+  const withSlash = route.endsWith("/") ? route : `${route}/`;
+  return `${company.siteUrl}${withSlash}${query ? `?${query}` : ""}`;
+}
+
+/**
  * Builds page metadata from a short description of the page, keeping titles,
  * canonicals and Open Graph tags consistent across the site.
  */
@@ -17,7 +32,7 @@ export function pageMetadata({
   path: string;
   keywords?: string[];
 }): Metadata {
-  const url = `${company.siteUrl}${path === "/" ? "" : path}`;
+  const url = canonicalUrl(path);
 
   return {
     title,
@@ -55,7 +70,7 @@ export function breadcrumbJsonLd(trail: { label: string; path: string }[]) {
       "@type": "ListItem",
       position: i + 1,
       name: item.label,
-      item: `${company.siteUrl}${item.path === "/" ? "" : item.path}`,
+      item: canonicalUrl(item.path),
     })),
   };
 }
