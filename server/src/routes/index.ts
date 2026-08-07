@@ -11,6 +11,8 @@ import { requireAdminHeader } from "../middleware/require-admin-header.js";
 import { adminWrite } from "../middleware/rate-limit.js";
 import { enquiriesRouter } from "./public/enquiries.routes.js";
 import { authRouter } from "./admin/auth.routes.js";
+import { statsRouter } from "./admin/stats.routes.js";
+import { adminEnquiriesRouter } from "./admin/enquiries.routes.js";
 
 export const routes = Router();
 
@@ -27,5 +29,7 @@ const admin = Router();
 admin.use(requireAdminHeader, adminWrite);
 
 admin.use("/auth", authRouter);
+admin.use("/stats", statsRouter);
+admin.use("/enquiries", adminEnquiriesRouter);
 
 routes.use("/admin", admin);

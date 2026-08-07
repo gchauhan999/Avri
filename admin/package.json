@@ -4,8 +4,29 @@
   "private": true,
   "description": "Avri Energy admin panel — jobs, applications, blog, clients and enquiries.",
   "scripts": {
-    "dev": "echo \"admin not scaffolded yet\" && exit 0",
-    "build": "echo \"admin not scaffolded yet\" && exit 0",
-    "start": "echo \"admin not scaffolded yet\" && exit 0"
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tiptap/extension-link": "^3.7.2",
+    "@tiptap/pm": "^3.7.2",
+    "@tiptap/react": "^3.7.2",
+    "@tiptap/starter-kit": "^3.7.2",
+    "next": "16.3.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
