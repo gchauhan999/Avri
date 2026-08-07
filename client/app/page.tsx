@@ -40,7 +40,7 @@ export default function HomePage() {
       {/* 7  */}
       <FeaturedProjects />
       {/* 8  */}
-      <Clients />
+      <Clients limit={8} showAll />
       {/* 9  */}
       <Certifications />
       {/* 10 */}

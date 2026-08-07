@@ -97,11 +97,14 @@ export const nav: NavItem[] = [
       { href: "/about", label: "About Us" },
       { href: "/industries", label: "Industries We Serve" },
       { href: "/projects", label: "Projects" },
+      { href: "/clients", label: "Clients" },
       { href: "/gallery", label: "Gallery" },
+      { href: "/careers", label: "Careers" },
     ],
   },
   { href: "/services", label: "Services" },
   { href: "/products", label: "Products" },
+  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact Us" },
 ];
 
@@ -714,19 +717,20 @@ export const gallery: GalleryItem[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Clients, certifications and testimonials                                   */
+/*  Certifications and testimonials                                            */
 /* -------------------------------------------------------------------------- */
 
-export const clients: Client[] = [
-  { name: "State Power Utility" },
-  { name: "Municipal Corporation" },
-  { name: "Auto Components Ltd" },
-  { name: "Logistics Developer" },
-  { name: "Process Industries" },
-  { name: "Educational Trust" },
-  { name: "Mobility Operator" },
-  { name: "Infra Developers" },
-];
+/**
+ * Clients used to be a list of eight placeholder names here ("State Power
+ * Utility", "Municipal Corporation", …) with no logos behind them. They now
+ * live in the database and are managed in the admin panel, because they are
+ * the one piece of editorial content that needs an authorisation step:
+ * publishing a company's logo without written permission is a trademark risk,
+ * so each row records who approved it and how, and nothing is visible on the
+ * site until it is both authorised and published.
+ *
+ * See `lib/content.ts` → `getClients()`.
+ */
 
 export const certifications: Certification[] = [
   {

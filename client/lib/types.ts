@@ -119,10 +119,26 @@ export interface GalleryItem {
   illustration: IllustrationKey;
 }
 
+/**
+ * A client, as returned by `GET /api/clients`.
+ *
+ * Unlike the rest of this file, clients live in the database rather than in
+ * `lib/site.ts` — they are the one piece of editorial content that needs an
+ * authorisation workflow, because publishing a company's logo without written
+ * permission is a trademark risk. The API only ever returns authorised,
+ * published rows, so there is no `authorized` flag to check here.
+ */
 export interface Client {
+  id: number;
   name: string;
-  /** Optional logo, e.g. "/assets/clients/ntpc.png". Falls back to a wordmark. */
-  logo?: string;
+  slug: string;
+  /** Absolute URL served by the API, or null for a wordmark fallback. */
+  logo?: string | null;
+  /** Measured when the logo was processed, so the plate never reflows. */
+  logoWidth?: number | null;
+  logoHeight?: number | null;
+  website?: string | null;
+  sector?: string | null;
 }
 
 export interface Certification {
