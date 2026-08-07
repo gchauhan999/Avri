@@ -6,7 +6,7 @@
  */
 
 import { apiFind, apiGet } from "./api";
-import type { Client, Job, JobSummary } from "./types";
+import type { Client, Job, JobSummary, Post, PostCategory, PostSummary } from "./types";
 
 /**
  * Authorised, published clients only.
@@ -53,5 +53,64 @@ export async function getJobIndex(): Promise<{ slug: string; updatedAt: string }
   return apiGet<{ slug: string; updatedAt: string }[]>("/api/jobs/index", [], {
     revalidate: 3600,
     tags: ["jobs"],
+  });
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Blog                                                                       */
+/* -------------------------------------------------------------------------- */
+
+export interface PostList {
+  items: PostSummary[];
+  page: number;
+  pageCount: number;
+  total: number;
+  /** Only present on an unfiltered first page. */
+  featured: PostSummary | null;
+}
+
+const EMPTY_LIST: PostList = {
+  items: [],
+  page: 1,
+  pageCount: 1,
+  total: 0,
+  featured: null,
+};
+
+export async function getPosts({
+  category = "",
+  page = 1,
+  limit = 9,
+}: { category?: string; page?: number; limit?: number } = {}): Promise<PostList> {
+  const params = new URLSearchParams();
+  if (category) params.set("category", category);
+  if (page > 1) params.set("page", String(page));
+  params.set("limit", String(limit));
+
+  return apiGet<PostList>(`/api/posts?${params.toString()}`, EMPTY_LIST, {
+    revalidate: 300,
+    tags: ["posts"],
+  });
+}
+
+/** Strict: a transient failure must throw, not cache a 404. See `apiFind`. */
+export async function getPost(slug: string): Promise<Post | null> {
+  return apiFind<Post>(`/api/posts/${encodeURIComponent(slug)}`, {
+    revalidate: 300,
+    tags: ["posts", `post:${slug}`],
+  });
+}
+
+export async function getPostCategories(): Promise<PostCategory[]> {
+  return apiGet<PostCategory[]>("/api/post-categories", [], {
+    revalidate: 1800,
+    tags: ["posts"],
+  });
+}
+
+export async function getPostIndex(): Promise<{ slug: string; updatedAt: string }[]> {
+  return apiGet<{ slug: string; updatedAt: string }[]>("/api/posts/index", [], {
+    revalidate: 3600,
+    tags: ["posts"],
   });
 }

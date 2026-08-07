@@ -30,6 +30,7 @@ export default function ImageUpload({
   hint,
   initial,
   aspect = "aspect-[3/1]",
+  fieldPrefix = "logo",
 }: {
   /** e.g. "/api/admin/clients/logo" */
   endpoint: string;
@@ -37,6 +38,8 @@ export default function ImageUpload({
   hint?: string;
   initial?: { path: string; url: string; width?: number | null; height?: number | null } | null;
   aspect?: string;
+  /** Names the hidden inputs: `<prefix>Path`, `<prefix>Width`, `<prefix>Height`. */
+  fieldPrefix?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [image, setImage] = useState<UploadedImage | null>(
@@ -81,9 +84,9 @@ export default function ImageUpload({
       <span className="block text-sm font-semibold text-ink-800">{label}</span>
 
       {/* What the surrounding form actually submits. */}
-      <input type="hidden" name="logoPath" value={image?.path ?? ""} />
-      <input type="hidden" name="logoWidth" value={image?.width || ""} />
-      <input type="hidden" name="logoHeight" value={image?.height || ""} />
+      <input type="hidden" name={`${fieldPrefix}Path`} value={image?.path ?? ""} />
+      <input type="hidden" name={`${fieldPrefix}Width`} value={image?.width || ""} />
+      <input type="hidden" name={`${fieldPrefix}Height`} value={image?.height || ""} />
 
       <div className="mt-1.5">
         {image ? (

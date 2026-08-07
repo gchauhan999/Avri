@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getJobIndex } from "@/lib/content";
+import { getJobIndex, getPostIndex } from "@/lib/content";
 import { products } from "@/lib/products";
 import { canonicalUrl } from "@/lib/seo";
 import { legalNav, navHrefs } from "@/lib/site";
@@ -23,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
    * Fail-soft: if the API is unreachable this returns an empty list rather
    * than throwing, so an outage costs us the job URLs, not the whole sitemap.
    */
-  const jobs = await getJobIndex();
+  const [jobs, articles] = await Promise.all([getJobIndex(), getPostIndex()]);
 
   const primary = [...navHrefs, "/request-a-quote", "/careers/apply"];
   const legal = legalNav.map((n) => n.href);
@@ -49,6 +49,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: canonicalUrl(`/careers/${job.slug}`),
       lastModified: new Date(job.updatedAt.replace(" ", "T") + "Z"),
       changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...articles.map((article) => ({
+      url: canonicalUrl(`/blog/${article.slug}`),
+      lastModified: new Date(article.updatedAt.replace(" ", "T") + "Z"),
+      changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
     ...legal.map((href) => ({
