@@ -2,49 +2,101 @@
 
 Website, API and admin panel for an electrical EPC and renewable energy company.
 
-**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Express 5 · MySQL 8 · Drizzle
+**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Laravel 12 ·
+Filament 5 · MySQL 8
 
 ```
-client/   the public website          :3000
-server/   REST API, MySQL, uploads    :4000
-admin/    login + dashboard           :3001
-brochure/ company profile PDF build   (standalone scripts, no deps)
+client/   the public website                    :3000   Next.js
+backend/  the admin panel and the public API    :8000   Laravel
+brochure/ company profile PDF build             (standalone scripts, no deps)
 ```
 
-Three npm workspaces, one lockfile. `client/` and `admin/` share most of their
-dependencies, so a single install keeps `next` from drifting between them.
+Two applications, and the split is along a real seam: `client/` renders pages
+for visitors, `backend/` owns the data and everyone who edits it. They meet at
+one narrow public API — a dozen endpoints — and at `/uploads`, which the website
+proxies through so images stay same-origin.
+
+There is no admin API. The panel is Filament, which renders on the Laravel
+server and talks to the database directly, so the admin surface is not reachable
+from a browser at all.
 
 ## Getting started
 
-```bash
-npm install                       # once, at the root
+You need PHP 8.2+ with Composer, Node 20.19+, and MySQL 8.
 
-# Create the database and a user for it (needs MySQL admin rights):
+```bash
+# The database (needs MySQL admin rights):
 #   CREATE DATABASE avri_energy CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-#   CREATE USER 'avri'@'127.0.0.1' IDENTIFIED BY '…';
-#   GRANT ALL PRIVILEGES ON avri_energy.* TO 'avri'@'127.0.0.1';
+
+npm install                                  # the website's dependencies
+composer install -d backend                  # the backend's
 
 cp client/.env.example client/.env
-cp server/.env.example server/.env    # fill in DB_PASSWORD and JWT_SECRET
-cp admin/.env.example  admin/.env
+cp backend/.env.example backend/.env         # fill in the database credentials
+php backend/artisan key:generate
 
-npm run db:migrate                # create the tables
-npm run db:seed                   # the five blog categories
-npm run admin:create              # your first admin login (prompts, no echo)
+php backend/artisan migrate                  # the seven tables
+php backend/artisan db:seed                  # the five blog categories
+php backend/artisan storage:link             # so uploaded images are served
+php backend/artisan avri:make-admin          # your first login
 
-npm run dev                       # all three, in one terminal
+npm run dev                                  # website :3000, backend :8000
 ```
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | client :3000, admin :3001, API :4000 |
-| `npm run build` | builds all three |
-| `npm run typecheck` | `tsc --noEmit` in each workspace |
-| `npm run lint` | eslint where configured |
-| `npm run db:check` | is MySQL reachable, are the tables there |
-| `npm run db:generate` | regenerate migration SQL after editing the schema |
-| `npm run db:migrate` / `db:seed` / `db:studio` | apply, seed, browse |
-| `npm run admin:create` | add an admin user |
+| `npm run dev` | the website on :3000 and the backend on :8000 |
+| `npm run queue` | the queue worker — nothing is emailed without it |
+| `npm run build` | builds the website |
+| `npm run typecheck` | `tsc --noEmit` in the website |
+| `npm run test:backend` | the backend's test suite |
+| `php backend/artisan migrate` | apply migrations |
+| `php backend/artisan avri:make-admin` | add an admin user |
+
+The admin panel is at **http://localhost:8000/admin**.
+
+### The queue is not optional
+
+Enquiry and application notifications are queued, so the visitor is never left
+waiting on SMTP. Nothing is sent until a worker runs — in development that means
+`npm run queue` in a second terminal; in production, a supervisor process or a
+`queue:work` cron.
+
+## Backend layout
+
+`backend/` is a standard Laravel application; the only parts worth pointing at
+are the ones that are not standard:
+
+```
+backend/
+  app/
+    Filament/Resources/      the admin panel — one folder per thing you edit
+    Models/                  the seven tables, and the rules that guard them
+    Http/Controllers/Api/    the public API the website reads
+    Http/Requests/           validation, worded to match the website's own
+    Services/                images, résumé checks, sanitising, cache pings
+    Jobs/                    queued notifications
+    Mail/                    what the team and the applicant receive
+  database/migrations/       the schema
+  storage/app/uploads/       logos and covers — symlinked to public/uploads
+  storage/app/resumes/       CVs — deliberately not symlinked anywhere
+```
+
+Three conventions differ from a fresh Laravel install, each for a reason:
+
+**Admins are `admin_users`, not `users`.** The table predates this application
+and the API shares it. `config/auth.php` points at `App\Models\AdminUser`, whose
+hash column is `password_hash`; there is no `users` table at all, so nobody can
+authenticate against the wrong one.
+
+**The queue table is `queue_jobs`.** `jobs` already means job openings here. The
+default would have Laravel writing queue payloads into the careers table.
+
+**Business rules live on the models, not in the panel.** The client
+authorisation gate, article sanitising, one-featured-post, publish stamping —
+all in `booted()` hooks. A rule that only runs when one particular page is used
+is not a rule; sanitising in particular is a security control and has to hold
+for a seeder or an import too.
 
 ## Where content lives
 
@@ -65,17 +117,18 @@ of services.
 
 ## The admin panel
 
-Served at `/admin` on the same domain as the site, which is what keeps the
-session cookie first-party and the auth simple.
+Filament, served at `/admin` by the Laravel application. It renders on the
+server and reads the database directly, so there is no admin API to secure and
+nothing for a browser to call behind your back.
 
 | Screen | What it does |
 | --- | --- |
-| Overview | Counts, latest enquiries and applications, failed-email warnings |
 | Enquiries | Contact and quote submissions, status, internal notes |
 | Applications | Applicants per role, status, **CV download**, notes |
 | Jobs | Post, edit, open and close roles |
-| Blog posts | Write, edit, publish, schedule, feature |
+| Articles | Write, edit, publish, schedule, feature |
 | Clients | Add clients, upload logos, authorise and publish |
+| Admin users | Accounts and roles — super admins only |
 
 ### Clients need permission, not just a checkbox
 
@@ -113,15 +166,17 @@ Email goes out over Gmail SMTP. Two things to know:
   personal address means notifications appear to come from that person and
   SPF/DKIM will not align with the domain — a fast route to the spam folder.
 
-Set `MAIL_ENABLED=false` in development. Submissions are then stored and marked
-`skipped` rather than failing.
+Set `MAIL_MAILER=log` in development. Messages are then written to
+`backend/storage/logs` instead of being sent, and the row records what happened
+either way.
 
 ## Résumés are personal data
 
-Treat `server/storage/resumes/` accordingly.
+Treat `backend/storage/app/resumes/` accordingly.
 
-- Résumés are **never** under a static mount. `storage/resumes` is a *sibling*
-  of `storage/public`, not a child, so no `express.static` can reach them. The
+- Résumés are **never** reachable from the web. They live on a private disk
+  with no symlink into `public/`, unlike `storage/app/uploads`, which is
+  symlinked so images can be served. The
   only way to read one is an authenticated download route.
 - Uploads are checked three ways: extension, MIME type, and the file's actual
   leading bytes (`%PDF-`, `PK\x03\x04`, `\xD0\xCF\x11\xE0`). The last one is
@@ -150,37 +205,38 @@ the blog and careers sections were added: under `output: "export"` a crawler
 receives an empty shell and the article text only appears once JavaScript runs
 — the wrong trade for the two sections whose entire purpose is to rank.
 
-So this needs a Node host. Plain static hosting will not serve it.
+So this needs a Node host for the website and a PHP host for the backend.
+Plain static hosting will not serve either.
 
 Recommended shape, behind one reverse proxy on `avrienergy.com`:
 
 ```
-/          → client  :3000    Next.js
-/admin     → admin   :3001    Next.js (basePath: "/admin")
-/api       → server  :4000    Express
-/uploads   → server  :4000    logos and covers (résumés are NOT here)
+/          → client   :3000   Next.js
+/admin     → backend  :8000   Laravel + Filament
+/api       → backend  :8000   the public API
+/uploads   → backend  :8000   logos and covers (résumés are NOT here)
 ```
 
-Keeping all three on one origin is what makes the session cookie first-party,
-removes CORS from the browser path, and keeps the API origin out of the page
-source. If the API ever moves to a different registrable domain, the cookie
-design needs revisiting.
+Keeping both on one origin is what makes the session cookie first-party,
+removes CORS from the browser path, and keeps the backend's origin out of the
+page source.
 
 Checklist before going live:
 
-- [ ] `JWT_SECRET` — fresh, at least 32 bytes (`openssl rand -base64 48`)
-- [ ] `STORAGE_ROOT` outside the deploy directory
-- [ ] `TRUST_PROXY=1` behind nginx, or rate limiting sees one IP for everyone
+- [ ] `APP_KEY` generated, `APP_DEBUG=false`, `APP_ENV=production`
+- [ ] `storage/` on a volume that survives a deploy, and `storage:link` run
+- [ ] Trusted proxies configured behind nginx, or rate limiting sees one IP
+      for every visitor
 - [ ] `CORS_ORIGINS` set to the real domains
 - [ ] Gmail App Password on a Workspace mailbox
-- [ ] `REVALIDATE_SECRET` matching in `client/.env` and `server/.env`
+- [ ] `REVALIDATE_SECRET` matching in `client/.env` and `backend/.env`
+- [ ] A queue worker running under supervisor — without one, nothing is emailed
 - [ ] HTTPS everywhere; the admin panel must not be reachable over HTTP
-- [ ] Nightly `mysqldump` + off-box copy of `storage/`
-- [ ] `SEED_ADMIN_*` removed from `.env` after the first login
+- [ ] Nightly `mysqldump` + off-box copy of `backend/storage/app/`
 
 ## Configuration
 
-Every value is documented in the three `.env.example` files. Nothing about the
+Every value is documented in the two `.env.example` files. Nothing about the
 company is hardcoded.
 
 `NEXT_PUBLIC_*` values are inlined at **build time** — restart the dev server
@@ -188,9 +244,9 @@ or rebuild after changing them. And they must be written as literal member
 expressions (`process.env.NEXT_PUBLIC_FOO`); Next substitutes them as text, so
 `process.env[key]` resolves to `undefined` in the browser.
 
-`server/.env` holds real secrets: the database password, the JWT signing key,
-the SMTP credentials. `admin/.env` holds none, by design — the session is an
-httpOnly cookie set by the API, so the admin app never handles a token.
+`backend/.env` holds every real secret: the application key, the database
+password, the SMTP credentials. `client/.env` holds none that matter — the
+website never authenticates anyone.
 
 ## Brand
 
