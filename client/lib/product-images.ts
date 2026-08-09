@@ -18,6 +18,7 @@ import type { StaticImageData } from "next/image";
 
 import abCable from "@/public/assets/products/ab-cable.jpg";
 import acChargingPoint from "@/public/assets/products/ac-charging-point.jpg";
+import airCircuitBreaker from "@/public/assets/products/air-circuit-breaker.png";
 import allInOneSolarStreetLight from "@/public/assets/products/all-in-one-solar-street-light.jpg";
 import apfcPanel from "@/public/assets/products/apfc-panel.jpg";
 import bifacialModule from "@/public/assets/products/bifacial-glass-glass-module.jpg";
@@ -26,7 +27,7 @@ import cableAccessories from "@/public/assets/products/cable-accessories.jpg";
 import castResinTransformer from "@/public/assets/products/cast-resin-dry-type-transformer.jpg";
 import controlCable from "@/public/assets/products/control-cable.jpg";
 import ctOperatedSmartMeter from "@/public/assets/products/ct-operated-smart-meter.jpg";
-import ctPt from "@/public/assets/products/ct-pt.jpg";
+import ctPt from "@/public/assets/products/ct-pt.png";
 import distributionBox from "@/public/assets/products/distribution-box.jpg";
 import dtMeter from "@/public/assets/products/dt-meter.jpg";
 import earthing from "@/public/assets/products/earthing.jpg";
@@ -48,8 +49,8 @@ import motorControlCentre from "@/public/assets/products/motor-control-centre-pa
 import outdoorPoleMountedVcb from "@/public/assets/products/outdoor-pole-mounted-vcb.jpg";
 import powerCable from "@/public/assets/products/power-cable.jpg";
 import powerTransformer from "@/public/assets/products/power-transformer.jpg";
-import rmu from "@/public/assets/products/rmu.jpg";
-import smartMeter from "@/public/assets/products/smart-meter.jpg";
+import rmu from "@/public/assets/products/rmu.png";
+import smartMeter from "@/public/assets/products/smart-meter.png";
 import solarInverter from "@/public/assets/products/solar-inverter.jpg";
 import solarPanel from "@/public/assets/products/solar-panel.jpg";
 import solarStructure from "@/public/assets/products/solar-structure.jpg";
@@ -68,6 +69,7 @@ import vcb from "@/public/assets/products/vcb.jpg";
  * product in the catalogue shows its own equipment.
  */
 export const productImages: Record<string, StaticImageData> = {
+  "air-circuit-breaker": airCircuitBreaker,
   "cast-resin-dry-type-transformer": castResinTransformer,
   "ht-metering-cubicle": htMeteringCubicle,
   "motor-control-centre-panel": motorControlCentre,
@@ -114,6 +116,38 @@ export const categoryImages: Record<string, StaticImageData> = {
   "Bus Ducts": busDuct,
   "Distribution Boxes": distributionBox,
 };
+
+/**
+ * Products and categories whose picture is a cut-out — the item on a plain
+ * white or transparent background, as in the printed brochure — rather than a
+ * photograph of it installed somewhere.
+ *
+ * The two need opposite framing and it cannot be worked out from the file. A
+ * photograph should fill the tile and be cropped, or it sits in a letterbox
+ * with bars down each side. A cut-out must be contained and given room, or the
+ * crop slices the edges off the equipment.
+ *
+ * **Add an entry here whenever you replace a photograph with a cut-out.**
+ * Everything absent from this set keeps the cropped photographic framing, so
+ * the catalogue can be re-shot a few products at a time without the rest
+ * looking wrong in the meantime.
+ *
+ * Keys are product slugs (as in `productImages`) or category names (as in
+ * `categoryImages`) — whichever the picture came from.
+ */
+export const cutoutImages = new Set<string>([
+  // Cut from the printed brochure's "Our Products" page.
+  "Smart Meters",
+  "CT/PT",
+  // Supplied as cut-outs with transparent backgrounds.
+  "RMU (Ring Main Unit)",
+  "air-circuit-breaker",
+]);
+
+/** True when this product's picture should be shown whole, not cropped. */
+export function isCutout(slug: string, category: string): boolean {
+  return cutoutImages.has(slug) || cutoutImages.has(category);
+}
 
 /** The URL for an image that may be a static import or a plain path. */
 export function imageSrc(image: string | StaticImageData | undefined): string {

@@ -20,6 +20,14 @@ export default function Media({
   priority = false,
   /** Adds a dark scrim, for when text is laid over the media. */
   overlay = false,
+  /**
+   * How the picture fills its frame.
+   *
+   * `cover` for photographs — a scene should reach the edges. `contain` for a
+   * cut-out of a single item, which needs the whole object visible and some
+   * room around it; cropping one slices the equipment off at the edges.
+   */
+  fit = "cover",
 }: {
   /** A path under `public/`, or a statically imported image. */
   src?: string | StaticImageData;
@@ -31,13 +39,20 @@ export default function Media({
   className?: string;
   priority?: boolean;
   overlay?: boolean;
+  fit?: "cover" | "contain";
 }) {
   // A blank string counts as "no photograph", so the illustration shows.
   const photo = typeof src === "string" ? src.trim() || undefined : src;
 
+  const contained = fit === "contain";
+
   return (
     <div
-      className={`relative isolate overflow-hidden bg-brand-50 ${rounded} ${ratio} ${className}`}
+      className={`relative isolate overflow-hidden ${
+        // A cut-out is lit on white in the studio, so anything but white behind
+        // it shows as a rectangle around the object.
+        contained ? "bg-white" : "bg-brand-50"
+      } ${rounded} ${ratio} ${className}`}
     >
       {photo ? (
         <Image
@@ -47,7 +62,14 @@ export default function Media({
           sizes={sizes}
           priority={priority}
           loading={priority ? undefined : "lazy"}
-          className="object-cover"
+          /**
+           * The breathing room goes on the image, not the frame. A `fill`
+           * image is absolutely positioned, and `inset-0` resolves against the
+           * frame's *padding box* — so padding there would be covered over.
+           * Padding here shrinks the content box that `object-contain` fits
+           * into, which is what actually insets the object.
+           */
+          className={contained ? "object-contain p-5" : "object-cover"}
         />
       ) : (
         <Illustration variant={illustration} />

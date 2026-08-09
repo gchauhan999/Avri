@@ -15,7 +15,7 @@ import {
   products,
   relatedProducts,
 } from "@/lib/products";
-import { imageSrc } from "@/lib/product-images";
+import { imageSrc, isCutout } from "@/lib/product-images";
 import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { company, contact } from "@/lib/site";
 
@@ -144,6 +144,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 sizes="(min-width: 1024px) 38vw, 100vw"
                 priority
                 className="ring-1 ring-ink-100"
+                fit={isCutout(product.slug, product.category) ? "contain" : "cover"}
               />
 
               <div className="mt-6 rounded-3xl border border-ink-100 bg-ink-50/60 p-7">

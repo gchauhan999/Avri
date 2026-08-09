@@ -2,6 +2,7 @@ import Link from "next/link";
 import Media from "./Media";
 import { ArrowRight } from "./Icons";
 import { HoverLift } from "./Motion";
+import { isCutout } from "@/lib/product-images";
 import type { Product } from "@/lib/types";
 
 /** Product card, shared by the home page strip and the products listing. */
@@ -20,6 +21,9 @@ export default function ProductCard({ product }: { product: Product }) {
             ratio="aspect-[4/3]"
             rounded="rounded-none"
             sizes="(min-width: 1280px) 25vw, (min-width: 640px) 45vw, 100vw"
+            // Catalogue cut-outs are shown whole; photographs still fill the
+            // tile. See `cutoutImages` in lib/product-images.ts.
+            fit={isCutout(product.slug, product.category) ? "contain" : "cover"}
           />
           <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-semibold text-brand-700 backdrop-blur">
             {product.category}
