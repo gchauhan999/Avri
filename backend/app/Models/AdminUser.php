@@ -70,6 +70,24 @@ class AdminUser extends Authenticatable implements FilamentUser
     }
 
     /**
+     * And the column is called that too.
+     *
+     * Overriding `getAuthPassword()` alone is not enough. Laravel rehashes a
+     * password on sign-in whenever the stored work factor no longer matches
+     * `BCRYPT_ROUNDS`, and it writes the new hash to whatever this returns —
+     * so with the default it issues `update admin_users set password = …` and
+     * the sign-in dies on "Unknown column 'password'".
+     *
+     * That is silent until the day someone changes the cost, or until an
+     * account carries a hash made at a different one — which every account
+     * inherited from the Node API does.
+     */
+    public function getAuthPasswordName(): string
+    {
+        return 'password_hash';
+    }
+
+    /**
      * Who may open the admin panel.
      *
      * Deactivating an account takes effect on its next request — there is no
