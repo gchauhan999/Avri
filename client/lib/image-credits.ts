@@ -91,13 +91,6 @@ export const creditGroups: CreditGroup[] = [
         sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=56633349",
       },
       {
-        file: "products/ct-pt.jpg",
-        subject: "Current & Potential Transformers (CT/PT)",
-        author: "The original uploader was Tambo at Hungarian Wikipedia.",
-        licence: "CC BY-SA",
-        sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=14881915",
-      },
-      {
         file: "products/dt-meter.jpg",
         subject: "DT (Distribution Transformer) Meter",
         author: "Zuzu",
@@ -243,13 +236,6 @@ export const creditGroups: CreditGroup[] = [
         author: "ToT89",
         licence: "CC BY-SA",
         sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=77637880",
-      },
-      {
-        file: "products/smart-meter.jpg",
-        subject: "Single & Three Phase Smart Meter",
-        author: "Mirko Tobias Schäfer",
-        licence: "CC BY",
-        sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=105210942",
       },
       {
         file: "products/junction-box.jpg",

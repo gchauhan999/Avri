@@ -4,6 +4,10 @@
 picture**, none is shared. They are imported statically by
 `lib/product-images.ts`; see "How a product finds its picture" below.
 
+`brochure/` is a staging area, not part of that count: cut-outs lifted from the
+printed brochure that have no category to sit in yet. Move one up a level and
+rename it to the category's filename when you decide where it belongs.
+
 ## What is here
 
 **37 photographs and 4 catalogue renders.** The photographs show the equipment
@@ -40,6 +44,21 @@ its own file, so the listing never shows the same picture three times.
 public/assets/products/transformer.jpg   ← drop your photo here, same filename
 npm run build
 ```
+
+### If the replacement is a cut-out
+
+A cut-out — the item alone on white, the way the printed brochure shows it —
+needs the opposite framing to a photograph, and nothing can tell them apart
+from the file itself. Add the product slug or the category name to
+`cutoutImages` in `lib/product-images.ts` and it will be shown whole on a white
+tile instead of cropped to fill.
+
+Skip that step and the object gets its edges sliced off. Do it to a photograph
+and the photograph sits in a letterbox. Everything not listed keeps the
+photographic framing, so the catalogue can be re-shot a few products at a time.
+
+Keep the filename's extension honest — rename to `.png` and update the import
+in `lib/product-images.ts` if the cut-out has a transparent background.
 
 `lib/product-images.ts` imports these files statically, so Next fingerprints
 each one — the served URL is `/_next/static/media/transformer.<hash>.jpg`.
