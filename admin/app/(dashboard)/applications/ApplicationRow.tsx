@@ -89,14 +89,16 @@ export default function ApplicationRow({
 
         <Td className="text-right">
           {/*
-            A plain link, not a fetch. The route requires the session cookie,
-            which a same-origin navigation carries automatically — and the API
-            responds with Content-Disposition: attachment, so it downloads
-            rather than rendering. This is why the cookie session was the right
-            choice over a bearer token: an <a download> cannot set a header.
+            A plain link, not a fetch, so the browser saves the file itself and
+            no CV is buffered in the tab.
+
+            It points at this app's own route rather than the API, because the
+            API refuses anything without the `X-Admin-Request` header and a
+            navigation cannot send one. `app/downloads/…/resume/route.ts` adds
+            it server-side and streams the response through.
           */}
           <a
-            href={`/admin/api/admin/applications/${application.id}/resume`}
+            href={`/admin/downloads/applications/${application.id}/resume`}
             className="inline-flex h-8 items-center rounded-lg bg-brand-500 px-3 text-xs font-semibold text-white hover:bg-brand-600"
           >
             Download CV

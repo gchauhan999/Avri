@@ -14,7 +14,7 @@
 import jwt, { type SignOptions } from "jsonwebtoken";
 import type { CookieOptions, Response } from "express";
 import { env } from "../config/env.js";
-import type { AdminUser } from "../db/schema.js";
+import type { AdminUser } from "../models/admin_users.js";
 
 const ISSUER = "avri-api";
 const AUDIENCE = "avri-admin";

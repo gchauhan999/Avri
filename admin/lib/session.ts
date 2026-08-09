@@ -12,6 +12,7 @@
  */
 
 import { redirect } from "next/navigation";
+import { EXPIRED_PARAM } from "../proxy";
 import { ApiError, apiServer } from "./api";
 
 export interface Session {
@@ -39,6 +40,7 @@ export async function getSession(): Promise<Session | null> {
 /** For pages that must not render at all without a session. */
 export async function requireSession(): Promise<Session> {
   const session = await getSession();
-  if (!session) redirect("/login");
+  // The marker lets `proxy.ts` bin the stale cookie — see the note there.
+  if (!session) redirect(`/login?${EXPIRED_PARAM}=1`);
   return session;
 }

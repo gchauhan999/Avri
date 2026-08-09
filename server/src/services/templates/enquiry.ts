@@ -3,7 +3,7 @@
  */
 
 import { env } from "../../config/env.js";
-import type { Enquiry } from "../../db/schema.js";
+import type { Enquiry } from "../../models/enquiries.js";
 import type { Message } from "../mailer.js";
 import { button, layout, paragraphHtml, rowsHtml, rowsText, type Row } from "./layout.js";
 

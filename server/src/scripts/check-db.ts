@@ -7,24 +7,27 @@
  * connection or migration problem, and this answers both in one command.
  */
 
-import { sql } from "drizzle-orm";
+import { QueryTypes } from "sequelize";
+import { closeDatabase, sequelize } from "../config/database.js";
 import { env } from "../config/env.js";
-import { closeDatabase, db } from "../db/client.js";
 
 async function main() {
   console.log(
     `\nConnecting to mysql://${env.db.user}@${env.db.host}:${env.db.port}/${env.db.database}\n`
   );
 
-  const [version] = (await db.execute(sql`SELECT VERSION() AS v`)) as unknown as [{ v: string }[]];
-  console.log(`  connected — MySQL ${version[0]?.v}`);
+  const [version] = await sequelize.query<{ v: string }>("SELECT VERSION() AS v", {
+    type: QueryTypes.SELECT,
+  });
+  console.log(`  connected — MySQL ${version?.v}`);
 
-  const [tables] = (await db.execute(sql`
-    SELECT TABLE_NAME AS name, TABLE_ROWS AS approxRows
-      FROM information_schema.TABLES
-     WHERE TABLE_SCHEMA = ${env.db.database}
-     ORDER BY TABLE_NAME
-  `)) as unknown as [{ name: string; approxRows: number | null }[]];
+  const tables = await sequelize.query<{ name: string; approxRows: number | null }>(
+    `SELECT TABLE_NAME AS name, TABLE_ROWS AS approxRows
+       FROM information_schema.TABLES
+      WHERE TABLE_SCHEMA = :database
+      ORDER BY TABLE_NAME`,
+    { type: QueryTypes.SELECT, replacements: { database: env.db.database } }
+  );
 
   if (tables.length === 0) {
     console.log("  no tables yet — run `npm run db:migrate`\n");
@@ -36,12 +39,13 @@ async function main() {
     console.log(`    ${t.name.padEnd(20)} ~${t.approxRows ?? 0} rows`);
   }
 
-  const [checks] = (await db.execute(sql`
-    SELECT CONSTRAINT_NAME AS name
-      FROM information_schema.TABLE_CONSTRAINTS
-     WHERE CONSTRAINT_SCHEMA = ${env.db.database}
-       AND CONSTRAINT_TYPE = 'CHECK'
-  `)) as unknown as [{ name: string }[]];
+  const checks = await sequelize.query<{ name: string }>(
+    `SELECT CONSTRAINT_NAME AS name
+       FROM information_schema.TABLE_CONSTRAINTS
+      WHERE CONSTRAINT_SCHEMA = :database
+        AND CONSTRAINT_TYPE = 'CHECK'`,
+    { type: QueryTypes.SELECT, replacements: { database: env.db.database } }
+  );
 
   console.log(
     `\n  clients publish CHECK: ${

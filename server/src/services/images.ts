@@ -17,7 +17,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
-import { unsupportedMedia } from "../lib/http-error.js";
+import { unsupportedMedia } from "../helpers/http-error.js";
+import { uploadUrl } from "../helpers/uploads.js";
 import { ensureDir, generatedName, publicRoot, toStoredPath } from "./storage.js";
 
 /**
@@ -53,7 +54,7 @@ const SPECS: Record<ImagePurpose, Spec> = {
 export interface StoredImage {
   /** Relative to STORAGE_ROOT, as stored in the database. */
   path: string;
-  /** Absolute URL for the browser. */
+  /** Same-origin URL for the browser — see `helpers/uploads.ts`. */
   url: string;
   width: number;
   height: number;
@@ -63,8 +64,7 @@ export interface StoredImage {
 export async function processImage(
   buffer: Buffer,
   mimetype: string,
-  purpose: ImagePurpose,
-  publicApiUrl: string
+  purpose: ImagePurpose
 ): Promise<StoredImage> {
   if (!ALLOWED_IMAGE_MIME.has(mimetype)) {
     throw unsupportedMedia(
@@ -109,8 +109,7 @@ export async function processImage(
 
   return {
     path: stored,
-    // `public/` is the static mount root, so it is not part of the URL.
-    url: `${publicApiUrl}/uploads/${stored.replace(/^public\//, "")}`,
+    url: uploadUrl(stored)!,
     width: output.info.width,
     height: output.info.height,
     bytes: output.info.size,

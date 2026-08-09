@@ -11,11 +11,10 @@
 import readline from "node:readline";
 import { stdin, stdout } from "node:process";
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { closeDatabase } from "../config/database.js";
 import { env } from "../config/env.js";
-import { EMAIL_RE } from "../lib/validation.js";
-import { closeDatabase, db } from "../db/client.js";
-import { adminUsers } from "../db/schema.js";
+import { EMAIL_RE } from "../helpers/validation.js";
+import { AdminUser } from "../models/index.js";
 
 const rl = readline.createInterface({ input: stdin, output: stdout });
 
@@ -49,12 +48,7 @@ async function main() {
   const email = (await ask("Email: ")).toLowerCase();
   if (!EMAIL_RE.test(email)) throw new Error("That is not a valid email address.");
 
-  const existing = await db
-    .select({ id: adminUsers.id })
-    .from(adminUsers)
-    .where(eq(adminUsers.email, email))
-    .limit(1);
-  if (existing.length > 0) {
+  if ((await AdminUser.count({ where: { email } })) > 0) {
     throw new Error(`${email} already has an account. Use the admin panel to change it.`);
   }
 
@@ -69,7 +63,7 @@ async function main() {
     throw new Error("Role must be 'super_admin' or 'editor'.");
   }
 
-  await db.insert(adminUsers).values({
+  await AdminUser.create({
     name,
     email,
     passwordHash: await bcrypt.hash(password, env.bcryptRounds),

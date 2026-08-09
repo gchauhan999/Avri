@@ -7,8 +7,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createApp } from "./app.js";
 import { configWarnings, env } from "./config/env.js";
-import { closeDatabase, pingDatabase } from "./db/client.js";
-import { logger } from "./lib/logger.js";
+import { closeDatabase, pingDatabase } from "./config/database.js";
+import { logger } from "./config/logger.js";
 
 async function ensureStorage() {
   for (const dir of [

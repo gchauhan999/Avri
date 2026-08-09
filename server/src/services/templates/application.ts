@@ -4,7 +4,7 @@
  */
 
 import { env } from "../../config/env.js";
-import type { Application } from "../../db/schema.js";
+import type { Application } from "../../models/applications.js";
 import type { Message } from "../mailer.js";
 import { button, layout, paragraphHtml, rowsHtml, rowsText, type Row } from "./layout.js";
 

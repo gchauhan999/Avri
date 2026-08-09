@@ -27,12 +27,32 @@ const nextConfig: NextConfig = {
    */
   async rewrites() {
     const api = (process.env.API_ORIGIN ?? "http://127.0.0.1:4000").replace(/\/$/, "");
-    return [{ source: "/api/:path*", destination: `${api}/api/:path*` }];
+    return [
+      { source: "/api/:path*", destination: `${api}/api/:path*` },
+      /**
+       * Uploaded logos and covers. The API returns them as `/uploads/…` paths
+       * rather than absolute URLs, so these are what make them resolve —
+       * without them every preview in the editor is a broken image.
+       *
+       * Two entries because `basePath` cuts both ways. A `src="/uploads/x"` in
+       * the markup is root-relative, so the browser asks for `/uploads/x`, not
+       * `/admin/uploads/x` — and by default every rewrite source is prefixed
+       * with the basePath. `basePath: false` covers the URL the browser
+       * actually requests; the prefixed one covers anything asking under
+       * `/admin`.
+       *
+       * In production both paths land on the same reverse proxy and the public
+       * site already serves `/uploads`, so this matters most in development,
+       * where the two apps are on different ports.
+       */
+      { source: "/uploads/:path*", destination: `${api}/uploads/:path*` },
+      { source: "/uploads/:path*", destination: `${api}/uploads/:path*`, basePath: false },
+    ];
   },
 
   images: {
-    // Uploaded logos and covers come back through the proxy above, so they are
-    // same-origin paths as far as next/image is concerned.
+    // Uploaded logos and covers come back through the rewrite above, so they
+    // are same-origin paths as far as next/image is concerned.
     formats: ["image/avif", "image/webp"],
   },
 };

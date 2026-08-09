@@ -17,8 +17,8 @@
     "sourceMap": true,
     "types": ["node"]
   },
-  // `drizzle.config.ts` is deliberately absent: it sits outside `rootDir`, and
-  // drizzle-kit compiles it itself.
+  // `migrations/`, `seeders/` and `config/config.cjs` are deliberately absent:
+  // sequelize-cli loads them with `require` and they never go through tsc.
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "drizzle"]
+  "exclude": ["node_modules", "dist", "migrations", "seeders"]
 }

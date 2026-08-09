@@ -16,7 +16,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { env } from "../config/env.js";
-import { logger } from "../lib/logger.js";
+import { logger } from "../config/logger.js";
 
 export const resumesRoot = () => path.join(env.storageRoot, "resumes");
 export const publicRoot = () => path.join(env.storageRoot, "public");
