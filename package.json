@@ -2,29 +2,24 @@
   "name": "avri-energy",
   "version": "1.0.0",
   "private": true,
-  "description": "Avri Energy — public website, REST API and admin panel.",
+  "description": "Avri Energy — public website. The API and admin panel are the Laravel application in backend/.",
   "workspaces": [
-    "client",
-    "server",
-    "admin"
+    "client"
   ],
   "scripts": {
-    "dev": "concurrently -n api,web,admin -c blue,green,magenta \"npm:dev:server\" \"npm:dev:client\" \"npm:dev:admin\"",
+    "dev": "concurrently -n web,api -c green,blue \"npm:dev:client\" \"npm:dev:backend\"",
     "dev:client": "npm run dev -w @avri/client",
-    "dev:server": "npm run dev -w @avri/server",
-    "dev:admin": "npm run dev -w @avri/admin",
-    "build": "npm run build -w @avri/server && npm run build -w @avri/client && npm run build -w @avri/admin",
-    "start": "concurrently -n api,web,admin -c blue,green,magenta \"npm:start:server\" \"npm:start:client\" \"npm:start:admin\"",
-    "start:client": "npm run start -w @avri/client",
-    "start:server": "npm run start -w @avri/server",
-    "start:admin": "npm run start -w @avri/admin",
+    "dev:backend": "php -d variables_order=EGPCS backend/artisan serve --host=127.0.0.1 --port=8000",
+    "//queue": "Notifications are queued, so nothing is emailed until a worker runs.",
+    "queue": "php backend/artisan queue:work",
+    "build": "npm run build -w @avri/client",
+    "start": "npm run start -w @avri/client",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "db:generate": "npm run db:generate -w @avri/server",
-    "db:migrate": "npm run db:migrate -w @avri/server",
-    "db:seed": "npm run db:seed -w @avri/server",
-    "db:studio": "npm run db:studio -w @avri/server",
-    "admin:create": "npm run admin:create -w @avri/server"
+    "//backend": "The Laravel commands below run from backend/; they are here so one shell does the lot.",
+    "db:migrate": "php backend/artisan migrate",
+    "db:seed": "php backend/artisan db:seed",
+    "test:backend": "php backend/artisan test"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

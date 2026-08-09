@@ -81,7 +81,7 @@ export const env = {
    * Origin of the Avri API, as the *browser* sees it. Forms POST here, so it
    * is compiled into the bundle and is not a place for anything secret.
    */
-  apiUrl: val(process.env.NEXT_PUBLIC_API_URL, "http://localhost:4000").replace(
+  apiUrl: val(process.env.NEXT_PUBLIC_API_URL, "http://localhost:8000").replace(
     /\/$/,
     ""
   ),
@@ -94,7 +94,7 @@ export const env = {
    */
   apiInternalUrl: val(
     process.env.API_INTERNAL_URL,
-    val(process.env.NEXT_PUBLIC_API_URL, "http://localhost:4000")
+    val(process.env.NEXT_PUBLIC_API_URL, "http://localhost:8000")
   ).replace(/\/$/, ""),
 
   /** Shared with the server's REVALIDATE_SECRET; guards `/api/revalidate`. */
