@@ -2,7 +2,7 @@
   "name": "@avri/server",
   "version": "1.0.0",
   "private": true,
-  "description": "Avri Energy REST API \u2014 careers, blog, clients and enquiries.",
+  "description": "Avri Energy REST API — careers, blog, clients and enquiries.",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -10,11 +10,12 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx src/db/migrate.ts",
-    "db:push": "drizzle-kit push",
-    "db:seed": "tsx src/db/seed.ts",
-    "db:studio": "drizzle-kit studio",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo",
+    "db:migrate:fresh": "sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate",
+    "db:seed": "sequelize-cli db:seed:all",
+    "db:seed:undo": "sequelize-cli db:seed:undo:all",
+    "db:setup": "npm run db:migrate && npm run db:seed",
     "admin:create": "tsx src/scripts/create-admin.ts",
     "db:check": "tsx src/scripts/check-db.ts"
   },
@@ -23,7 +24,6 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "drizzle-orm": "^0.45.2",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
@@ -34,6 +34,7 @@
     "pino": "^9.13.1",
     "pino-http": "^10.5.0",
     "sanitize-html": "^2.17.0",
+    "sequelize": "^6.37.8",
     "sharp": "^0.35.3",
     "zod": "^4.1.13"
   },
@@ -46,7 +47,7 @@
     "@types/node": "^20",
     "@types/nodemailer": "^7.0.2",
     "@types/sanitize-html": "^2.16.0",
-    "drizzle-kit": "^0.31.10",
+    "sequelize-cli": "^6.6.5",
     "tsx": "^4.20.6",
     "typescript": "^5"
   }

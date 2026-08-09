@@ -12,10 +12,10 @@ import express, { type Express } from "express";
 import helmet from "helmet";
 import { pinoHttp } from "pino-http";
 import { env } from "./config/env.js";
-import { logger } from "./lib/logger.js";
-import { errorHandler, notFoundHandler } from "./middleware/error.js";
-import { publicRead } from "./middleware/rate-limit.js";
-import { pingDatabase } from "./db/client.js";
+import { logger } from "./config/logger.js";
+import { pingDatabase } from "./config/database.js";
+import { errorHandler, notFoundHandler } from "./middlewares/error.js";
+import { publicRead } from "./middlewares/rate-limit.js";
 import { routes } from "./routes/index.js";
 
 export function createApp(): Express {
@@ -51,7 +51,7 @@ export function createApp(): Express {
       },
       credentials: true,
       methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-      // `X-Admin-Request` is the CSRF guard — see middleware/require-admin-header.
+      // `X-Admin-Request` is the CSRF guard — see middlewares/require-admin-header.
       allowedHeaders: ["Content-Type", "Accept", "X-Admin-Request"],
       // So the admin panel can read the filename off a résumé download.
       exposedHeaders: ["Content-Disposition"],

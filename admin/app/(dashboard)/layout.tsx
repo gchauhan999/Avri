@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { EXPIRED_PARAM } from "../../proxy";
 import Sidebar, { type NavCounts } from "../../components/layout/Sidebar";
 import SignOutButton from "../../components/layout/SignOutButton";
 import { getSession } from "../../lib/session";
 import { apiServer } from "../../lib/api";
+
+const CHANGE_PASSWORD_PATH = "/settings/password";
 
 /**
  * The real auth gate.
@@ -14,10 +18,27 @@ import { apiServer } from "../../lib/api";
  */
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) {
+    /**
+     * The `expired` marker is what lets `proxy.ts` clear a stale cookie. Plain
+     * `/login` would be bounced straight back here, because the proxy only
+     * knows that a cookie exists, not that the API has stopped accepting it.
+     *
+     * Only added when there is actually a cookie to clear, so the marker keeps
+     * meaning "your session died" rather than "you were never signed in".
+     */
+    const stale = (await cookies()).has(process.env.COOKIE_NAME ?? "avri_admin");
+    redirect(stale ? `/login?${EXPIRED_PARAM}=1` : "/login");
+  }
 
-  // A bootstrap account on its seeded password can go exactly one place.
-  if (session.mustChangePassword) redirect("/settings/password");
+  /**
+   * A bootstrap account on its seeded password can go exactly one place.
+   *
+   * Safe to do unconditionally because the target lives in the `(account)`
+   * route group, not this one — so this layout never runs for it and cannot
+   * redirect it to itself. Keep it that way.
+   */
+  if (session.mustChangePassword) redirect(CHANGE_PASSWORD_PATH);
 
   // Badge counts. Failing to load them must not take the whole panel down.
   const counts = await apiServer<NavCounts>("/api/admin/stats/counts").catch(() => ({}));
@@ -38,7 +59,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
         <div className="border-t border-ink-100 p-3">
           <Link
-            href="/settings/password"
+            href={CHANGE_PASSWORD_PATH}
             className="block rounded-lg px-3 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900"
           >
             Change password

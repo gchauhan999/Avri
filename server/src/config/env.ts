@@ -56,7 +56,6 @@ const schema = z.object({
   PORT: int(4000),
   LOG_LEVEL: str("info"),
 
-  PUBLIC_API_URL: str("http://localhost:4000"),
   PUBLIC_SITE_URL: str("http://localhost:3000"),
   CORS_ORIGINS: str("http://localhost:3000,http://localhost:3001"),
 
@@ -138,7 +137,6 @@ export const env = {
   port: raw.PORT,
   logLevel: raw.LOG_LEVEL,
 
-  publicApiUrl: trimSlash(raw.PUBLIC_API_URL),
   publicSiteUrl: trimSlash(raw.PUBLIC_SITE_URL),
   corsOrigins: raw.CORS_ORIGINS.split(",")
     .map((o) => trimSlash(o.trim()))
