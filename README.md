@@ -8,7 +8,6 @@ Filament 5 · MySQL 8
 ```
 client/   the public website                    :3000   Next.js
 backend/  the admin panel and the public API    :8000   Laravel
-brochure/ company profile PDF build             (standalone scripts, no deps)
 ```
 
 Two applications, and the split is along a real seam: `client/` renders pages
